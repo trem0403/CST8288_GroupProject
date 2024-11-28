@@ -12,22 +12,44 @@ public abstract class User {
     private int userID;
     private String email;
     private String password;
-    private Role role;
+    private String role;
 
     /**
-     * Constructor for creating a User object.
-     *
-     * @param userID   The unique identifier for the user.
+     * Default Constructor for creating a User object for user registration.
+     * @param userID   The user's ID.
      * @param email    The user's email address.
      * @param password The user's password.
      * @param role     The role of the user (either AcademicProfessional or AcademicInstitution).
      */
-    public User(int userID, String email, String password, Role role) {
+    public User(int userID, String email, String password, String role) {
         this.userID = userID;
         this.email = email;
         this.password = password;
         this.role = role;
     }
+    
+    /**
+     * Constructor for creating a User object for user registration.
+     *
+     * @param email    The user's email address.
+     * @param password The user's password.
+     * @param role     The role of the user (either AcademicProfessional or AcademicInstitution).
+     */
+    public User(String email, String password, String role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+    
+    /**
+     * Constructor for creating a User object when fetching all users (either AcademicProfessional or AcademicInstitution).
+     * @param userID   The user's ID.
+     */
+    public User(int userID) {
+        this.userID = userID;
+    }
+    
+    
 
     /** @return The unique identifier of the user. */
     public int getUserID() {
@@ -60,12 +82,12 @@ public abstract class User {
     }
 
     /** @return The role of the user. */
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
     /** @param role The role to set for the user. */
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 }

@@ -1,4 +1,4 @@
-package model;
+package enums;
 
 /**
  * Enum representing the schedule for a course.

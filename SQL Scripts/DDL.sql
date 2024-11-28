@@ -43,7 +43,7 @@ CREATE TABLE AcademicInstitution (
 -- AcademicProfessional Table
 CREATE TABLE AcademicProfessional (
   professionalID INT PRIMARY KEY,
-  Name VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
   institutionID INT NOT NULL,
   academicPosition VARCHAR(255) NOT NULL,
   educationBackground TEXT,

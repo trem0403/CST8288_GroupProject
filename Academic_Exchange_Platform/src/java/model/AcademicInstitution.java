@@ -7,24 +7,50 @@ import enums.Role;
  * This class extends the User class since institutions are users in the system.
  */
 public class AcademicInstitution extends User {
-    private int institutionNameID;
+    private int institutionNameID; // Foreign key to InstitutionNames
     private String zip;
-
+    
     /**
-     * Constructor for creating an AcademicInstitution object.
-     *
-     * @param userID           The unique identifier of the user.
-     * @param email            The email of the institution.
-     * @param password         The password for the institution's account.
-     * @param role             The role (AcademicInstitution).
+     * Default Constructor for creating an AcademicInstitution object.
+     * @param userID            The userID of the institution.
+     * @param email             The email of the institution.
+     * @param password          The password for the institution's account.
+     * @param role              The role (AcademicInstitution).
      * @param institutionNameID The identifier of the institution's name.
-     * @param zip              The ZIP code where the institution is located.
+     * @param zip               The zip code of the institution's address. 
      */
-    public AcademicInstitution(int userID, String email, String password, Role role, int institutionNameID, String zip) {
-        super(userID, email, password, role);
+    public AcademicInstitution(int userID, String email, String password, String role, int institutionNameID, String zip) {
+        super(email, password, role);
         this.institutionNameID = institutionNameID;
         this.zip = zip;
     }
+
+    /**
+     * Constructor for creating an AcademicInstitution object during registration.
+     * 
+     * @param email             The email of the institution.
+     * @param password          The password for the institution's account.
+     * @param role              The role (AcademicInstitution).
+     * @param institutionNameID The identifier of the institution's name.
+     */
+    public AcademicInstitution(String email, String password, String role, int institutionNameID) {
+        super(email, password, role);
+        this.institutionNameID = institutionNameID;
+    }
+    
+    /**
+     * Constructor for creating an AcademicInstitution object when fetching all AcademicInstitution users.
+     * @param userID            The userID of the institution.
+     * @param institutionNameID The identifier of the institution's name.
+     * @param zip               The zip code of the institution's address. 
+     */
+    public AcademicInstitution(int userID, int institutionNameID, String zip) {
+        super(userID);
+        this.institutionNameID = institutionNameID;
+        this.zip = zip;
+    }
+    
+    
 
     /** @return The institution's name identifier. */
     public int getInstitutionNameID() {
