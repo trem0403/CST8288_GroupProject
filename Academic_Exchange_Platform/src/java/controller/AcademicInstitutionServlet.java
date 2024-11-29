@@ -1,6 +1,7 @@
 package controller;
 
 import dao.AcademicInstitutionDAO;
+import dao.DatabaseConnectionUtil;
 import model.AcademicInstitution;
 import dao.InstitutionNameDAO;
 import model.InstitutionName;
@@ -21,13 +22,13 @@ import javax.servlet.annotation.WebServlet;
  *
  * @author Ethan Tremblay
  */
-@WebServlet("/institutionRegister")
+@WebServlet(name = "AcademicInstitutionServlet", urlPatterns = "/institutionRegister")
 public class AcademicInstitutionServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    final private AcademicInstitutionDAO academicInstitutionDAO = new AcademicInstitutionDAO();
-    final private InstitutionNameDAO institutionNameDAO = new InstitutionNameDAO();
+    private AcademicInstitutionDAO academicInstitutionDAO;
+    private InstitutionNameDAO institutionNameDAO;
 
     public AcademicInstitutionServlet() {
         super();
@@ -42,8 +43,8 @@ public class AcademicInstitutionServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         // Initialize the DAO's
-//        academicInstitutionDAO = new AcademicInstitutionDAO();
-//        institutionNameDAO = new InstitutionNameDAO();
+        academicInstitutionDAO = new AcademicInstitutionDAO();
+        institutionNameDAO = new InstitutionNameDAO();
     }
 
     /**
@@ -58,20 +59,7 @@ public class AcademicInstitutionServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Declare a list to hold InstitutionName objects, which will be fetched from the database.
-        List<InstitutionName> institutionNamesList;
-
-        try {
-            // Retrieve all institution names from the database using the DAO.
-            institutionNamesList = institutionNameDAO.getAll();
-
-            // Set the list of institution names as a request attribute to make it available to the JSP page.
-            request.setAttribute("institutionNamesList", institutionNamesList);
-        } catch (SQLException e) {
-            // Log any SQL exceptions that occur while fetching the institution names.
-            Logger.getLogger(AcademicInstitutionServlet.class.getName())
-                    .log(Level.SEVERE, "Error fetching institution names", e);
-        }
+        sendInstitutionNameList(request, response);
 
         // Forward the request and response to the JSP page for rendering the registration form.
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_registration.jsp");
@@ -98,57 +86,96 @@ public class AcademicInstitutionServlet extends HttpServlet {
         // Define role explicitly
         String role = "AcademicInstitution";
 
-        // Create the AcademicInstitution object
-        AcademicInstitution academicInstitution = new AcademicInstitution(email, password, role, institutionNameID);
+        // Initialize error messages
+        String emailError = null;
+        String passwordError = null;
 
-        // Insert into database
+        boolean hasError = false;
+
+        // Check if email format is valid
+        if (!email.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+            emailError = "Invalid email format";
+            hasError = true;
+        }
+
+        // Check if email is already registered
         try {
-            academicInstitutionDAO.create(academicInstitution);
-            request.setAttribute("message", "Institution successfully registered!");
+            if (academicInstitutionDAO.isEmailAlreadyRegistered(email)) {
+                emailError = "The email is already registered. Please use a different email.";
+                hasError = true;
+            }
         } catch (SQLException ex) {
-            Logger.getLogger(AcademicInstitutionServlet.class.getName()).log(Level.SEVERE, "Error creating institution", ex);
-            request.setAttribute("error", "Failed to register institution. Please try again.");
+            Logger.getLogger(AcademicInstitutionServlet.class.getName()).log(Level.SEVERE, "Error with query", ex);
+            emailError = "An error occurred while checking the email. Please try again.";
+            hasError = true;
         }
 
-        // Redirect to a success page or show confirmation
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_details.jsp");
-        dispatcher.forward(request, response);
+        // Check if password length is valid
+        if (password.length() < 6) {
+            passwordError = "Password must be at least 6 characters";
+            hasError = true;
+        }
+
+        // If there are errors, set them as request attributes and forward back to the JSP
+        if (hasError) {
+            request.setAttribute("email-error", emailError);
+            request.setAttribute("password-error", passwordError);
+
+            // Add form data to preserve user input
+            request.setAttribute("email", email);
+            request.setAttribute("password", password);
+
+            sendInstitutionNameList(request, response);
+
+            // Forward to the registration page again
+            request.getRequestDispatcher("WEB-INF/views/academic_institution_registration.jsp").forward(request, response);
+            return;
+        } else {
+            // Continue with the registration process (e.g., save the data to the database)
+            // If successful, redirect to a success page
+
+            // Create the AcademicInstitution object
+            AcademicInstitution academicInstitution = new AcademicInstitution(email, password, role, institutionNameID);
+
+            // Insert into database
+            try {
+                academicInstitutionDAO.create(academicInstitution);
+                request.setAttribute("message", "Institution successfully registered!");
+            } catch (SQLException ex) {
+                Logger.getLogger(AcademicInstitutionServlet.class.getName()).log(Level.SEVERE, "Error creating institution", ex);
+                request.setAttribute("error", "Failed to register institution. Please try again.");
+            }
+            // Forward to a success page
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_details.jsp");
+            dispatcher.forward(request, response);
+        }
     }
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    protected void sendInstitutionNameList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AcademicInstitutionServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AcademicInstitutionServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+
+        // Declare a list to hold InstitutionName objects, which will be fetched from the database.
+        List<InstitutionName> institutionNamesList;
+
+        try {
+            // Retrieve all institution names from the database using the DAO.
+            institutionNamesList = institutionNameDAO.getAll();
+
+            // Set the list of institution names as a request attribute to make it available to the JSP page.
+            request.setAttribute("institutionNamesList", institutionNamesList);
+        } catch (SQLException e) {
+            // Log any SQL exceptions that occur while fetching the institution names.
+            Logger.getLogger(AcademicInstitutionServlet.class.getName())
+                    .log(Level.SEVERE, "Error fetching institution names", e);
         }
     }
-
+    
     /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
+     * Called when the servlet is destroyed (shutting down), closes the database connection pool.
      */
     @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+    public void destroy() {
+        // Close the connection pool to release resources
+        DatabaseConnectionUtil.closeDataSource();
+        }
 } //end of class

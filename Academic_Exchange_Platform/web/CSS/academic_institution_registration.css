@@ -1,0 +1,84 @@
+/* Basic Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: white;
+}
+
+/* Dark mode styling */
+.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* Center form container */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px; /* Ensure there's some space around the form */
+    box-sizing: border-box; /* Ensure padding is included in the width calculation */
+}
+
+/* Form styling */
+.form-card {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 500px; /* Set a max-width to prevent stretching */
+    text-align: center;
+    box-sizing: border-box; /* Include padding in the element's width */
+}
+
+/* Input fields and button */
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border: 1px solid #555;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    box-sizing: border-box; /* Prevent overflow */
+}
+
+input[type="submit"] {
+    background-color: #ff5722;
+    border: none;
+    padding: 14px;
+    width: 100%;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box; /* Prevent overflow */
+}
+
+input[type="submit"]:hover {
+    background-color: #e64a19;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+
+.error-border {
+    border: 2px solid red;
+}
+
+
+
