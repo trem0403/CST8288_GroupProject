@@ -11,6 +11,8 @@ import enums.Role;
 /**
  * Data Access Object (DAO) for managing AcademicInstitution data in the database.
  * Implements CRUD operations as defined in the BaseDAO interface.
+ * 
+ * @author Ethan Tremblay
  */
 public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
 
@@ -33,7 +35,7 @@ public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
              // Insert the user into the User table
             insertUserStmt.setString(1, institution.getEmail());
             insertUserStmt.setString(2, institution.getPassword());
-            insertUserStmt.setString(3, institution.getRole().toString());
+            insertUserStmt.setString(3, institution.getRole());
             insertUserStmt.executeUpdate();
             
              // Get the generated userID
@@ -56,6 +58,7 @@ public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
      * @return The AcademicInstitution object.
      * @throws SQLException If a database access error occurs.
      */
+    @Override
     public AcademicInstitution getByID(int institutionID) throws SQLException {
         String getInstitutionSQL = "SELECT * FROM AcademicInstitution WHERE institutionID = ?";
         String getUserSQL = "SELECT * FROM User WHERE userID = ?";

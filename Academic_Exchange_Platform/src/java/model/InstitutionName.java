@@ -4,19 +4,19 @@ package model;
  * Represents an institution name entity.
  * Each institution is identified by a unique name.
  */
-public class InstitutionNames {
+public class InstitutionName {
 
-    private int institutionNamesID; // Primary key
+    private int institutionNameID; // Primary key
     private String name;
 
     /**
      * Constructor to create an InstitutionNames object.
      *
-     * @param institutionNamesID the unique ID of the institution name.
+     * @param institutionNameID the unique ID of the institution name.
      * @param name the name of the institution.
      */
-    public InstitutionNames(int institutionNamesID, String name) {
-        this.institutionNamesID = institutionNamesID;
+    public InstitutionName(int institutionNameID, String name) {
+        this.institutionNameID = institutionNameID;
         this.name = name;
     }
 
@@ -25,8 +25,8 @@ public class InstitutionNames {
      *
      * @return the institution name ID.
      */
-    public int getInstitutionNamesID() {
-        return institutionNamesID;
+    public int getInstitutionNameID() {
+        return institutionNameID;
     }
 
     /**
@@ -34,8 +34,8 @@ public class InstitutionNames {
      *
      * @param institutionNamesID the institution name ID to set.
      */
-    public void setInstitutionNamesID(int institutionNamesID) {
-        this.institutionNamesID = institutionNamesID;
+    public void setInstitutionNameID(int institutionNamesID) {
+        this.institutionNameID = institutionNamesID;
     }
 
     /**

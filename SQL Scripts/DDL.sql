@@ -13,8 +13,8 @@ CREATE TABLE User (
 );
 
 -- InstitutionNames Table
-CREATE TABLE InstitutionNames (
-  institutionNamesID INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE InstitutionName (
+  institutionNameID INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL
 );
 
@@ -34,7 +34,7 @@ CREATE TABLE AcademicInstitution (
   zip VARCHAR(20) UNIQUE,
   FOREIGN KEY (institutionID) REFERENCES User(userID)
    ON DELETE CASCADE,
-  FOREIGN KEY (institutionNameID) REFERENCES InstitutionNames(institutionNamesID)
+  FOREIGN KEY (institutionNameID) REFERENCES InstitutionName(institutionNameID)
     ON DELETE CASCADE,
   FOREIGN KEY (zip) REFERENCES Address(zip)
     ON DELETE CASCADE

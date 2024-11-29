@@ -7,6 +7,8 @@ import java.util.List;
  * Base interface for Data Access Objects (DAOs).
  * Defines common CRUD operations to be implemented by all DAO classes.
  * 
+ * @author Ethan Tremblay
+ * 
  * @param <T> The type of the entity the DAO handles.
  */
 public interface GenericDAO<T> {

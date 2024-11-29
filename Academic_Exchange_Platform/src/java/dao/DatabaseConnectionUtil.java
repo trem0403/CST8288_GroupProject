@@ -9,22 +9,23 @@ import java.sql.SQLException;
 /**
  * Utility class for managing database connections using HikariCP connection pooling.
  * This class sets up HikariCP configuration and provides methods for retrieving database connections.
+ * 
+ * @author Ethan Tremblay
  */
 public class DatabaseConnectionUtil {
 
     // DataSource instance for HikariCP connection pool
-    private static HikariDataSource dataSource;
+    static HikariDataSource dataSource;
 
     // Static block to initialize the connection pool
     static {
         try {
             HikariConfig config = new HikariConfig();
+            config.setDriverClassName("com.mysql.cj.jdbc.Driver"); // MySQL driver
             config.setJdbcUrl("jdbc:mysql://localhost:3306/aep"); // URL of your database
             config.setUsername("root"); // Your database username
-            config.setPassword("password"); // Your database password
+            config.setPassword("root"); // Your database password
             config.setMaximumPoolSize(10); // Maximum pool size
-            config.setDriverClassName("com.mysql.cj.jdbc.Driver"); // MySQL driver
-            config.setAutoCommit(true); // Auto commit for transactions
             dataSource = new HikariDataSource(config);
         } catch (Exception e) {
             throw new ExceptionInInitializerError("HikariCP initialization failed: " + e.getMessage());

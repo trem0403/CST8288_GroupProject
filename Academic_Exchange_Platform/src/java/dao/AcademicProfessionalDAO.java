@@ -11,6 +11,8 @@ import enums.Role;
 /**
  * Data Access Object (DAO) for managing AcademicProfessional data in the database.
  * Implements CRUD operations as defined in the GenericDAO interface.
+ * 
+ * @author Ethan Tremblay
  */
 public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional> {
 
@@ -32,7 +34,7 @@ public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional>
             // Insert into User table
             insertUserStmt.setString(1, professional.getEmail());
             insertUserStmt.setString(2, professional.getPassword());
-            insertUserStmt.setString(3, professional.getRole().toString());
+            insertUserStmt.setString(3, professional.getRole());
             insertUserStmt.executeUpdate();
 
             // Get the generated userID
@@ -53,10 +55,11 @@ public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional>
     /**
      * Retrieves an AcademicProfessional by userID.
      *
-     * @param userID The user ID of the academic professional to retrieve.
+     * @param  professionalID The id of the professional
      * @return The AcademicProfessional object.
-     * @throws SQLException If a database access error occurs.
+     * @throws SQLException   If a database access error occurs.
      */
+    @Override
     public AcademicProfessional getByID(int professionalID) throws SQLException {
         String getProfessionalSQL = "SELECT * FROM AcademicProfessional WHERE professionalID = ?";
         String getUserSQL = "SELECT * FROM User WHERE userID = ?";
