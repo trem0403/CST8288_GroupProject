@@ -58,18 +58,24 @@ public class AcademicInstitutionServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Declare a list to hold InstitutionName objects, which will be fetched from the database.
         List<InstitutionName> institutionNamesList;
 
         try {
+            // Retrieve all institution names from the database using the DAO.
             institutionNamesList = institutionNameDAO.getAll();
+
+            // Set the list of institution names as a request attribute to make it available to the JSP page.
             request.setAttribute("institutionNamesList", institutionNamesList);
         } catch (SQLException e) {
-            Logger.getLogger(AcademicInstitutionServlet.class.getName()).log(Level.SEVERE, "Error fetching institution names", e);
+            // Log any SQL exceptions that occur while fetching the institution names.
+            Logger.getLogger(AcademicInstitutionServlet.class.getName())
+                    .log(Level.SEVERE, "Error fetching institution names", e);
         }
 
+        // Forward the request and response to the JSP page for rendering the registration form.
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_registration.jsp");
         dispatcher.forward(request, response);
-
     }
 
     /**
@@ -83,13 +89,14 @@ public class AcademicInstitutionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
+        // Get form data
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         int institutionNameID = Integer.parseInt(request.getParameter("institutionNameID"));
 
         // Define role explicitly
-        String role = "AcademicInstitution";  
+        String role = "AcademicInstitution";
 
         // Create the AcademicInstitution object
         AcademicInstitution academicInstitution = new AcademicInstitution(email, password, role, institutionNameID);
