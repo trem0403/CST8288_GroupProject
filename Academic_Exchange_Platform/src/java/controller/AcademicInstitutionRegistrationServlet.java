@@ -23,14 +23,14 @@ import javax.servlet.annotation.WebServlet;
  * @author Ethan Tremblay
  */
 @WebServlet(name = "AcademicInstitutionServlet", urlPatterns = "/institutionRegister")
-public class AcademicInstitutionServlet extends HttpServlet {
+public class AcademicInstitutionRegistrationServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
     private AcademicInstitutionDAO academicInstitutionDAO;
     private InstitutionNameDAO institutionNameDAO;
 
-    public AcademicInstitutionServlet() {
+    public AcademicInstitutionRegistrationServlet() {
         super();
     }
 
@@ -105,7 +105,7 @@ public class AcademicInstitutionServlet extends HttpServlet {
                 hasError = true;
             }
         } catch (SQLException ex) {
-            Logger.getLogger(AcademicInstitutionServlet.class.getName()).log(Level.SEVERE, "Error with query", ex);
+            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error with query", ex);
             emailError = "An error occurred while checking the email. Please try again.";
             hasError = true;
         }
@@ -142,7 +142,7 @@ public class AcademicInstitutionServlet extends HttpServlet {
                 academicInstitutionDAO.create(academicInstitution);
                 request.setAttribute("message", "Institution successfully registered!");
             } catch (SQLException ex) {
-                Logger.getLogger(AcademicInstitutionServlet.class.getName()).log(Level.SEVERE, "Error creating institution", ex);
+                Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error creating institution", ex);
                 request.setAttribute("error", "Failed to register institution. Please try again.");
             }
             // Forward to a success page
@@ -165,7 +165,7 @@ public class AcademicInstitutionServlet extends HttpServlet {
             request.setAttribute("institutionNamesList", institutionNamesList);
         } catch (SQLException e) {
             // Log any SQL exceptions that occur while fetching the institution names.
-            Logger.getLogger(AcademicInstitutionServlet.class.getName())
+            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName())
                     .log(Level.SEVERE, "Error fetching institution names", e);
         }
     }

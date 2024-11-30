@@ -65,7 +65,8 @@ public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
 
         try (Connection conn = DatabaseConnectionUtil.getConnection();
              PreparedStatement getInstitutionStmt = conn.prepareStatement(getInstitutionSQL);
-             PreparedStatement getUserStmt = conn.prepareStatement(getUserSQL)) {
+             PreparedStatement getUserStmt = conn.prepareStatement(getUserSQL)) 
+        {
 
             // Get the academic institution
             getInstitutionStmt.setInt(1, institutionID);

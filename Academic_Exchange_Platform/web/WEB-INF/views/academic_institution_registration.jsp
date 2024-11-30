@@ -12,13 +12,17 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.global.js"></script>
 
         <!-- CSS -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/academic_institution_registration.css" />      
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/academic_institution_registration.css" />  
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/header.css" />
 
         <!-- JS -->
         <script src="${pageContext.request.contextPath}/JS/academic_institution_registration_validation.js" defer></script>
     </head>
 
+    <%@ include file="header.jsp"%>
+
     <body class="dark-mode">
+
         <div id="app">
             <div class="form-container">
                 <div class="form-card">
@@ -60,5 +64,6 @@
 
             app.mount("#app");
         </script>
+        
     </body>
 </html>

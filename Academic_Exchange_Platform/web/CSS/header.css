@@ -1,0 +1,30 @@
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Keeps the header above other elements */
+    background-color: #2e2e2e; /* Dark Grey */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-image {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.platform-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
+
