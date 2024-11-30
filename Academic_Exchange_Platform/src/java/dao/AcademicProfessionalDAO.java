@@ -161,4 +161,20 @@ public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional>
             updateProfessionalStmt.executeUpdate();
         }
     }
+    
+    public boolean isEmailAlreadyRegistered(String email) throws SQLException {
+        boolean isRegistered = false;
+        String validateSQL = "SELECT 1 FROM User WHERE email = ?";
+
+        try (Connection conn = DatabaseConnectionUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(validateSQL)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                isRegistered = rs.next(); // If a result is returned, the email is registered
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return isRegistered;
+    }
 } // end of class

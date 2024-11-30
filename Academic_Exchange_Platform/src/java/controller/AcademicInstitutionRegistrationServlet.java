@@ -1,12 +1,11 @@
 package controller;
 
-import dao.AcademicInstitutionDAO;
 import dao.DatabaseConnectionUtil;
+import dao.AcademicInstitutionDAO;
 import model.AcademicInstitution;
 import dao.InstitutionNameDAO;
 import model.InstitutionName;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -89,6 +88,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
         // Initialize error messages
         String emailError = null;
         String passwordError = null;
+        String institutionError = null;
 
         boolean hasError = false;
 
@@ -115,11 +115,24 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             passwordError = "Password must be at least 6 characters";
             hasError = true;
         }
+     
+        // Check if the institution is already registered
+        try {
+            if (academicInstitutionDAO.isInstitutionNameAlreadyRegistered(institutionNameID)) {
+                institutionError = "An institution with this name is already registered.";
+                hasError = true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error checking institution", ex);
+            institutionError = "An error occurred while checking the institution. Please try again.";
+            hasError = true;
+        }
 
         // If there are errors, set them as request attributes and forward back to the JSP
         if (hasError) {
             request.setAttribute("email-error", emailError);
             request.setAttribute("password-error", passwordError);
+            request.setAttribute("institution-error", institutionError);
 
             // Add form data to preserve user input
             request.setAttribute("email", email);
@@ -155,14 +168,14 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             throws ServletException, IOException {
 
         // Declare a list to hold InstitutionName objects, which will be fetched from the database.
-        List<InstitutionName> institutionNamesList;
+        List<InstitutionName> institutionNameList;
 
         try {
             // Retrieve all institution names from the database using the DAO.
-            institutionNamesList = institutionNameDAO.getAll();
+            institutionNameList = institutionNameDAO.getAll();
 
             // Set the list of institution names as a request attribute to make it available to the JSP page.
-            request.setAttribute("institutionNamesList", institutionNamesList);
+            request.setAttribute("institutionNameList", institutionNameList);
         } catch (SQLException e) {
             // Log any SQL exceptions that occur while fetching the institution names.
             Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName())

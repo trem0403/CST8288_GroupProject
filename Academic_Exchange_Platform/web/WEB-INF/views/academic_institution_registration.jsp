@@ -43,7 +43,7 @@
 
                         <select name="institutionNameID">
                             <%
-                                List<InstitutionName> institutions = (List<InstitutionName>) request.getAttribute("institutionNamesList");
+                                List<InstitutionName> institutions = (List<InstitutionName>) request.getAttribute("institutionNameList");
                                 for (InstitutionName institution : institutions) {
                             %>
                             <option value="<%= institution.getInstitutionNameID()%>">
@@ -51,6 +51,9 @@
                             </option>
                             <% }%>
                         </select>
+                        <div id="institution-error" class="error-message">
+                            <%= request.getAttribute("institution-error") != null ? request.getAttribute("institution-error") : ""%>
+                        </div>
 
                         <input type="submit" value="Register" />
                     </form>
@@ -64,6 +67,6 @@
 
             app.mount("#app");
         </script>
-        
+
     </body>
 </html>
