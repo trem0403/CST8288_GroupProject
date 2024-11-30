@@ -8,27 +8,30 @@ public class AcademicProfessional extends User {
     private String name;
     private int institutionID;
     private String academicPosition;
+    private String currentPositionAtInstitution;
     private String educationBackground;
     private String areaOfExpertise;
 
     /**
      * Default constructor for creating an AcademicProfessional object.
      * 
-     * @param userID              The user ID of the academic professional.
-     * @param email               The email of the academic professional.
-     * @param password            The password for the academic professional's account.
-     * @param role                The role (AcademicProfessional).
-     * @param name                The name of the academic professional.
-     * @param institutionID       The ID of the associated academic institution.
-     * @param academicPosition    The position/title of the academic professional.
+     * @param userID                       The user ID of the academic professional.
+     * @param email                        The email of the academic professional.
+     * @param password                     The password for the academic professional's account.
+     * @param role                         The role (AcademicProfessional).
+     * @param name                         The name of the academic professional.
+     * @param institutionID                The ID of the associated academic institution.
+     * @param academicPosition             The position/title of the academic professional.
+     * @param currentPositionAtInstitution The position a professional has at the institution they are currently working at.
      * @param educationBackground The education background of the academic professional.
      * @param areaOfExpertise     The area of expertise of the academic professional.
      */
-    public AcademicProfessional(int userID, String email, String password, String role, String name, int institutionID, String academicPosition, String educationBackground, String areaOfExpertise) {
+    public AcademicProfessional(int userID, String email, String password, String role, String name, int institutionID, String academicPosition, String currentPositionAtInstitution, String educationBackground, String areaOfExpertise) {
         super(userID, email, password, role);
         this.name = name;
         this.institutionID = institutionID;
         this.academicPosition = academicPosition;
+        this.currentPositionAtInstitution = currentPositionAtInstitution;
         this.educationBackground = educationBackground;
         this.areaOfExpertise = areaOfExpertise;
     }
@@ -57,14 +60,16 @@ public class AcademicProfessional extends User {
      * @param name                The name of the academic professional.
      * @param institutionID       The ID of the associated academic institution.
      * @param academicPosition    The position/title of the academic professional.
+     * @param currentPositionAtInstitution The position a professional has at the institution they are currently working at.
      * @param educationBackground The education background of the academic professional.
      * @param areaOfExpertise     The area of expertise of the academic professional.
      */
-    public AcademicProfessional(int userID, String name, int institutionID, String academicPosition, String educationBackground, String areaOfExpertise) {
+    public AcademicProfessional(int userID, String name, int institutionID, String academicPosition, String currentPositionAtInstitution, String educationBackground, String areaOfExpertise) {
         super(userID);
         this.name = name;
         this.institutionID = institutionID;
         this.academicPosition = academicPosition;
+        this.currentPositionAtInstitution = currentPositionAtInstitution;
         this.educationBackground = educationBackground;
         this.areaOfExpertise = areaOfExpertise;
     }
@@ -101,6 +106,16 @@ public class AcademicProfessional extends User {
         this.academicPosition = academicPosition;
     }
 
+    /** @return The current institution position of the academic professional. */
+    public String getCurrentPositionAtInstitution() {
+        return currentPositionAtInstitution;
+    }
+
+    /** @param currentPositionAtInstitution The current institution position to set for the academic professional. */
+    public void setCurrentPositionAtInstitution(String currentPositionAtInstitution) {
+        this.currentPositionAtInstitution = currentPositionAtInstitution;
+    }
+    
     /** @return The education background of the academic professional. */
     public String getEducationBackground() {
         return educationBackground;

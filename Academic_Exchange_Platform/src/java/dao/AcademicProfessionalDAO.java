@@ -87,6 +87,7 @@ public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional>
                         professionalRS.getString("name"),
                         professionalRS.getInt("institutionID"),
                         professionalRS.getString("academicPosition"),
+                        professionalRS.getString("currentPositionAtInstitution"),
                         professionalRS.getString("educationBackground"),
                         professionalRS.getString("areaOfExpertise")
                     );
@@ -105,8 +106,8 @@ public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional>
     @Override
     public List<AcademicProfessional> getAll() throws SQLException {
         List<AcademicProfessional> professionals = new ArrayList<>();
-        String getAllProfessionalsSQL = "SELECT professionalID, name, institutionID, academicPosition, educationBackground, areaOfExpertise" +
-                                        "FROM AcademicProfessional ORDER BY professionalID";
+        String getAllProfessionalsSQL = "SELECT professionalID, name, institutionID, academicPosition, currentPositionAtInstitution, educationBackground, areaOfExpertise" +
+                                        "FROM AcademicProfessional ORDER BY professionalID"; 
         
         try (
             Connection conn = DatabaseConnectionUtil.getConnection();
@@ -119,9 +120,10 @@ public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional>
                     int institutionID = rs.getInt("institutionID");
                     String academicPosition = rs.getString("academicPosition");
                     String educationBackground = rs.getString("educationBackground");
+                    String currentPositionAtInstitution = rs.getString("currentPositionAtInstitution");
                     String areaOfExpertise = rs.getString("areaOfExpertise");
                     
-                    professionals.add(new AcademicProfessional(professionalID, name, institutionID, academicPosition, educationBackground, areaOfExpertise));
+                    professionals.add(new AcademicProfessional(professionalID, name, institutionID, academicPosition, currentPositionAtInstitution, educationBackground, areaOfExpertise));
                 }
             }
         }
@@ -137,7 +139,7 @@ public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional>
     @Override
     public void update(AcademicProfessional professional) throws SQLException {
         String updateUserSQL = "UPDATE User SET email = ?, password = ?, role = ? WHERE userID = ?";
-        String updateProfessionalSQL = "UPDATE AcademicProfessional SET name = ?, institutionID = ?, academicPosition = ?, educationBackground = ?, areaOfExpertise = ? WHERE userID = ?";
+        String updateProfessionalSQL = "UPDATE AcademicProfessional SET name = ?, institutionID = ?, academicPosition = ?, currentPositionAtInstitution = ?, educationBackground = ?, areaOfExpertise = ? WHERE userID = ?";
 
         try (Connection conn = DatabaseConnectionUtil.getConnection();
              PreparedStatement updateUserStmt = conn.prepareStatement(updateUserSQL);
@@ -152,6 +154,7 @@ public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional>
             updateProfessionalStmt.setString(1, professional.getName());
             updateProfessionalStmt.setInt(2, professional.getInstitutionID());
             updateProfessionalStmt.setString(3, professional.getAcademicPosition());
+            updateProfessionalStmt.setString(3, professional.getCurrentPositionAtInstitution());
             updateProfessionalStmt.setString(4, professional.getEducationBackground());
             updateProfessionalStmt.setString(5, professional.getAreaOfExpertise());
             updateProfessionalStmt.setInt(6, professional.getUserID());

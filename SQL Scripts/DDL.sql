@@ -46,6 +46,7 @@ CREATE TABLE AcademicProfessional (
   name VARCHAR(255) NOT NULL,
   institutionID INT NOT NULL,
   academicPosition VARCHAR(255) NOT NULL,
+  currentPositionAtInstitution VARCHAR(255),
   educationBackground TEXT,
   areaOfExpertise TEXT,
   FOREIGN KEY (professionalID) REFERENCES User(userID)
