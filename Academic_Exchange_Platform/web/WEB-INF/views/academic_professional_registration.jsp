@@ -65,7 +65,7 @@
                             <% }%>
                         </select>
 
-                        <input type="submit" value="Register" />
+                        <input type="submit" value="Register"/>
                     </form>
                 </div>
             </div>

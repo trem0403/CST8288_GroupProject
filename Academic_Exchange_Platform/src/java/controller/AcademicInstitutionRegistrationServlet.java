@@ -1,10 +1,15 @@
 package controller;
 
 import dao.DatabaseConnectionUtil;
+
 import dao.AcademicInstitutionDAO;
 import model.AcademicInstitution;
+
 import dao.InstitutionNameDAO;
 import model.InstitutionName;
+
+import dao.UserDAO;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -27,6 +32,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
 
     private AcademicInstitutionDAO academicInstitutionDAO;
     private InstitutionNameDAO institutionNameDAO;
+    private UserDAO userDAO;
 
   
 
@@ -41,6 +47,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
         // Initialize the DAO's
         academicInstitutionDAO = new AcademicInstitutionDAO();
         institutionNameDAO = new InstitutionNameDAO();
+        userDAO = new UserDAO();
     }
 
     /**
@@ -58,8 +65,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
         sendInstitutionNameList(request, response);
 
         // Forward the request and response to the JSP page for rendering the registration form.
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_registration.jsp");
-        dispatcher.forward(request, response);
+        request.getRequestDispatcher("WEB-INF/views/academic_institution_registration.jsp").forward(request, response);
     }
 
     /**
@@ -97,7 +103,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
 
         // Check if email is already registered
         try {
-            if (academicInstitutionDAO.isEmailAlreadyRegistered(email)) {
+            if (userDAO.isEmailAlreadyRegistered(email)) {
                 emailError = "The email is already registered. Please use a different email.";
                 hasError = true;
             }
@@ -156,8 +162,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
                 request.setAttribute("error", "Failed to register institution. Please try again.");
             }
             // Forward to a success page
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_details.jsp");
-            dispatcher.forward(request, response);
+            request.getRequestDispatcher("WEB-INF/views/academic_institution_details.jsp").forward(request, response);
         }
     }
 

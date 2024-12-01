@@ -6,10 +6,12 @@ import dao.AcademicProfessionalDAO;
 import model.AcademicProfessional;
 
 import dao.AcademicInstitutionDAO;
-import model.AcademicInstitution;
 
 import dao.InstitutionNameDAO;
 import model.InstitutionName;
+
+import dao.UserDAO;
+
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -34,6 +36,7 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
     private AcademicProfessionalDAO academicProfessionalDAO;
     private AcademicInstitutionDAO academicInstitutionDAO;
     private InstitutionNameDAO institutionNameDAO;
+    private UserDAO userDAO;
 
     
 
@@ -49,6 +52,7 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
         academicProfessionalDAO = new AcademicProfessionalDAO();
         academicInstitutionDAO = new AcademicInstitutionDAO();
         institutionNameDAO = new InstitutionNameDAO();
+        userDAO = new UserDAO();
     }
 
     /**
@@ -66,8 +70,7 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
         sendInstitutionNameList(request, response);
 
         // Forward the request and response to the JSP page for rendering the registration form.
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_professional_registration.jsp");
-        dispatcher.forward(request, response);
+        request.getRequestDispatcher("WEB-INF/views/academic_professional_registration.jsp").forward(request, response);
     }
 
     /**
@@ -117,7 +120,7 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
 
         // Check if email is already registered
         try {
-            if (academicProfessionalDAO.isEmailAlreadyRegistered(email)) {
+            if (userDAO.isEmailAlreadyRegistered(email)) {
                 emailError = "The email is already registered. Please use a different email.";
                 hasError = true;
             }
@@ -209,7 +212,5 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
             Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName())
                     .log(Level.SEVERE, "Error fetching institution names", e);
         }
-    }
-
-   
+    }  
 } //end of class

@@ -12,6 +12,8 @@ import enums.Role;
  * Data Access Object (DAO) for managing AcademicInstitution data in the database.
  * Implements CRUD operations as defined in the BaseDAO interface.
  * 
+ * Uses DatabaseConnectionUtil to manage database connections.
+ * 
  * @author Ethan Tremblay
  */
 public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
@@ -156,23 +158,14 @@ public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
         } 
     }
     
-    public boolean isEmailAlreadyRegistered(String email) throws SQLException {
-    boolean isRegistered = false;
-    String validateSQL = "SELECT 1 FROM User WHERE email = ?";
-
-    try (Connection conn = DatabaseConnectionUtil.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(validateSQL)) {
-        stmt.setString(1, email);
-        try (ResultSet rs = stmt.executeQuery()) {
-            isRegistered = rs.next(); // If a result is returned, the email is registered
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-
-    return isRegistered;
-}
     
+    /**
+     * Checks if an academic institution with a given Institution Name ID is already registered.
+     * 
+     * @param institutionNameID the ID of the institution name to check
+     * @return true if the institution is registered, false otherwise
+     * @throws SQLException if a database access error occurs
+     */
     public boolean isInstitutionNameAlreadyRegistered(int institutionNameID) throws SQLException {
         boolean isRegistered = false;
         String validateSQL = "SELECT 1 FROM AcademicInstitution WHERE institutionNameID = ?";
@@ -183,13 +176,17 @@ public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
             try (ResultSet rs = stmt.executeQuery()) {
                 isRegistered = rs.next(); // If a result is returned, the institution is already registered
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        } 
         return isRegistered;
     }
-    
+
+    /**
+     * Retrieves the Institution ID associated with a given Institution Name ID.
+     * 
+     * @param institutionNameID the ID of the institution name to look up
+     * @return the Institution ID if found, or -1 if no matching record is found
+     * @throws SQLException if a database access error occurs
+     */
     public int getInstitutionIDByNameID(int institutionNameID) throws SQLException {
         int institutionID = -1;
         String query = "SELECT InstitutionID FROM AcademicInstitution WHERE InstitutionNameID = ?";
@@ -197,10 +194,10 @@ public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
         try (Connection conn = DatabaseConnectionUtil.getConnection(); 
              PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setInt(1, institutionNameID);
-            ResultSet rs = preparedStatement.executeQuery();
-
-            if (rs.next()) {
-                institutionID = rs.getInt("InstitutionID");
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    institutionID = rs.getInt("InstitutionID"); // Retrieve the Institution ID
+                }
             }
         }
         return institutionID;
