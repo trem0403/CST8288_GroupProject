@@ -24,14 +24,11 @@ import javax.servlet.annotation.WebServlet;
 @WebServlet(name = "AcademicInstitutionServlet", urlPatterns = "/institutionRegister")
 public class AcademicInstitutionRegistrationServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
 
     private AcademicInstitutionDAO academicInstitutionDAO;
     private InstitutionNameDAO institutionNameDAO;
 
-    public AcademicInstitutionRegistrationServlet() {
-        super();
-    }
+  
 
     /**
      * Initializes the servlet and sets up the DAO instance. This method is
@@ -182,13 +179,5 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
                     .log(Level.SEVERE, "Error fetching institution names", e);
         }
     }
-    
-    /**
-     * Called when the servlet is destroyed (shutting down), closes the database connection pool.
-     */
-    @Override
-    public void destroy() {
-        // Close the connection pool to release resources
-        DatabaseConnectionUtil.closeDataSource();
-        }
+ 
 } //end of class

@@ -1,5 +1,4 @@
 <%@page import="model.InstitutionName"%>
-<%@page import="model.AcademicInstitution"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html;" pageEncoding="UTF-8"%>
 <!DOCTYPE html>

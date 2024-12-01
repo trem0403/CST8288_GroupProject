@@ -177,7 +177,8 @@ public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
         boolean isRegistered = false;
         String validateSQL = "SELECT 1 FROM AcademicInstitution WHERE institutionNameID = ?";
 
-        try (Connection conn = DatabaseConnectionUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(validateSQL)) {
+        try (Connection conn = DatabaseConnectionUtil.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(validateSQL)) {
             stmt.setInt(1, institutionNameID);
             try (ResultSet rs = stmt.executeQuery()) {
                 isRegistered = rs.next(); // If a result is returned, the institution is already registered
@@ -188,6 +189,20 @@ public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
 
         return isRegistered;
     }
+    
+    public int getInstitutionIDByNameID(int institutionNameID) throws SQLException {
+        int institutionID = -1;
+        String query = "SELECT InstitutionID FROM AcademicInstitution WHERE InstitutionNameID = ?";
 
+        try (Connection conn = DatabaseConnectionUtil.getConnection(); 
+             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setInt(1, institutionNameID);
+            ResultSet rs = preparedStatement.executeQuery();
 
+            if (rs.next()) {
+                institutionID = rs.getInt("InstitutionID");
+            }
+        }
+        return institutionID;
+    }
 } // end of class

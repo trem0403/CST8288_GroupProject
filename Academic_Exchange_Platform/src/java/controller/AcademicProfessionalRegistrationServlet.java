@@ -27,18 +27,15 @@ import javax.servlet.annotation.WebServlet;
  *
  * @author Ethan Tremblay
  */
-@WebServlet(name = "AcademicInstitutionServlet", urlPatterns = "/professionalRegister")
+@WebServlet(name = "AcademicProfessionalRegistrationServlet", urlPatterns = "/professionalRegister")
 public class AcademicProfessionalRegistrationServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
 
     private AcademicProfessionalDAO academicProfessionalDAO;
     private AcademicInstitutionDAO academicInstitutionDAO;
     private InstitutionNameDAO institutionNameDAO;
 
-    public AcademicProfessionalRegistrationServlet() {
-        super();
-    }
+    
 
     /**
      * Initializes the servlet and sets up the DAO instance. This method is
@@ -69,7 +66,8 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
         sendInstitutionNameList(request, response);
 
         // Forward the request and response to the JSP page for rendering the registration form.
-        request.getRequestDispatcher("WEB-INF/views/academic_professional_registration.jsp").forward(request, response);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_professional_registration.jsp");
+        dispatcher.forward(request, response);
     }
 
     /**
@@ -89,8 +87,10 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         int institutionNameID = Integer.parseInt(request.getParameter("institutionNameID"));
-        int institutionID = Integer.parseInt(request.getParameter("institutionID"));
         String academicPosition = request.getParameter("academicPosition");
+        
+        // Fetch the institutionID based on the selected institutionNameID
+        int institutionID = -1;
 
         // Define role explicitly
         String role = "AcademicProfessional";
@@ -138,13 +138,27 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
             academicPositionError = "Academic Position must only use letters and spaces";
             hasError = true;
         }
+        
+        // Fetch the institutionID based on the selected institutionNameID
+        try {
+            institutionID = academicInstitutionDAO.getInstitutionIDByNameID(institutionNameID);
+            if (institutionID == -1) {
+                request.setAttribute("error", "Invalid Institution Name selection.");
+                hasError = true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName())
+                    .log(Level.SEVERE, "Error fetching institution ID", ex);
+            request.setAttribute("error", "An error occurred while fetching the institution ID.");
+            hasError = true;
+        }
 
         // If there are errors, set them as request attributes and forward back to the JSP
         if (hasError) {
             request.setAttribute("name-error", nameError);
             request.setAttribute("email-error", emailError);
             request.setAttribute("password-error", passwordError);
-            request.setAttribute("academicPosition-error", passwordError);
+            request.setAttribute("academicPosition-error", academicPositionError);
 
             // Add form data to preserve user input
             request.setAttribute("name", name);
@@ -192,18 +206,10 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
             request.setAttribute("institutionNameList", institutionNameList);
         } catch (SQLException e) {
             // Log any SQL exceptions that occur while fetching the institution names.
-            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName())
+            Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName())
                     .log(Level.SEVERE, "Error fetching institution names", e);
         }
     }
 
-    /**
-     * Called when the servlet is destroyed (shutting down), closes the database
-     * connection pool.
-     */
-    @Override
-    public void destroy() {
-        // Close the connection pool to release resources
-        DatabaseConnectionUtil.closeDataSource();
-    }
+   
 } //end of class
