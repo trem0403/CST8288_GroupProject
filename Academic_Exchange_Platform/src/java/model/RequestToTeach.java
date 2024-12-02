@@ -13,6 +13,10 @@ public class RequestToTeach {
     private String status;
     private String notificationMessage;
     private String notificationDate;
+    
+    public RequestToTeach() {
+    	
+    }
 
     /**
      * Constructor to create a RequestToTeach object.

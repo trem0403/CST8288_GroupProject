@@ -6,6 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import model.AcademicInstitution;
+import model.Course;
 import enums.Role;
 
 /**
@@ -187,6 +188,50 @@ public class AcademicInstitutionDAO implements GenericDAO<AcademicInstitution> {
         }
 
         return isRegistered;
+    }
+    
+ // Update address for an academic institution
+    public void updateAddress(int institutionID, String address, String city, String state, String zip, String country) throws SQLException {
+        String updateSQL = "UPDATE AcademicInstitution SET address = ?, city = ?, state = ?, zip = ?, country = ? WHERE institutionID = ?";
+
+        try (Connection conn = DatabaseConnectionUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateSQL)) {
+
+            stmt.setString(1, address);
+            stmt.setString(2, city);
+            stmt.setString(3, state);
+            stmt.setString(4, zip);
+            stmt.setString(5, country);
+            stmt.setInt(6, institutionID);
+            stmt.executeUpdate();
+        }
+    }
+    
+ // Add a course offering for a specific institution
+    public void addCourseOffering(Course course) throws SQLException {
+        String insertSQL = "INSERT INTO Course (institutionID, title, code, termID, outline, schedule, deliveryMethod, preferredQualifications, compensation) " +
+                           "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnectionUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setInt(1, course.getInstitutionID());
+            stmt.setString(2, course.getTitle());
+            stmt.setString(3, course.getCode());
+            stmt.setInt(4, course.getTermID());
+            stmt.setString(5, course.getOutline());
+            stmt.setString(6, course.getSchedule());
+            stmt.setString(7, course.getDeliveryMethod());
+            stmt.setString(8, course.getPreferredQualifications());
+            stmt.setDouble(9, course.getCompensation());
+            stmt.executeUpdate();
+
+            // Retrieve the generated course ID
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                course.setCourseID(generatedKeys.getInt(1));
+            }
+        }
     }
 
 

@@ -3,9 +3,12 @@ package controller;
 import dao.DatabaseConnectionUtil;
 import dao.AcademicInstitutionDAO;
 import model.AcademicInstitution;
+import model.Course;
 import dao.InstitutionNameDAO;
 import dao.RequestToTeachDAO;
 import model.InstitutionName;
+import model.RequestToTeach;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -60,12 +63,20 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        sendInstitutionNameList(request, response);
+    	
+    	String action = request.getParameter("action");
+    	
+    	if("editProfile".equals(action)) {
+    		showEditProfileForm(request, response);
+    	} else {
+        
+    	sendInstitutionNameList(request, response);
 
         // Forward the request and response to the JSP page for rendering the registration form.
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_registration.jsp");
         dispatcher.forward(request, response);
+    	
+    	}
     }
 
     /**
@@ -79,6 +90,12 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	
+    	String action = request.getParameter("action");
+
+        if ("updateProfile".equals(action)) {
+            updateProfile(request, response);
+        } else {
 
         // Get form data
         String email = request.getParameter("email");
@@ -165,6 +182,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_details.jsp");
             dispatcher.forward(request, response);
         }
+       }
     }
     //accept the teaching request
     private void acceptRequest(HttpServletRequest request, HttpServletResponse response)
@@ -174,8 +192,15 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
         String institutionName = request.getParameter("institutionName");
 
         try {
-            // Update the request status to 'Accepted'
-            requestToTeachDAO.updateRequestStatus(requestID, "Accepted", "Your request has been accepted by " + institutionName);
+            // Create a RequestToTeach object with updated details
+            RequestToTeach requestToTeach = new RequestToTeach();
+            requestToTeach.setRequestToTeachID(requestID);
+            requestToTeach.setStatus("Accepted");
+            requestToTeach.setNotificationMessage("Your request has been accepted by " + institutionName);
+            requestToTeach.setNotificationDate(null); // Automatically set by the DAO's SQL statement
+
+            // Update the teaching request
+            requestToTeachDAO.update(requestToTeach);
 
             // Redirect or forward to appropriate page after accepting the request
             request.setAttribute("message", "The request has been accepted successfully!");
@@ -188,6 +213,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
     }
+
     
     //reject the teaching request
     private void rejectRequest(HttpServletRequest request, HttpServletResponse response)
@@ -197,8 +223,15 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
         String institutionName = request.getParameter("institutionName");
 
         try {
-            // Update the request status to 'Rejected'
-            requestToTeachDAO.updateRequestStatus(requestID, "Rejected", "Your request has been rejected by " + institutionName);
+            // Create a RequestToTeach object with updated details
+            RequestToTeach requestToTeach = new RequestToTeach();
+            requestToTeach.setRequestToTeachID(requestID);
+            requestToTeach.setStatus("Rejected");
+            requestToTeach.setNotificationMessage("Your request has been rejected by " + institutionName);
+            requestToTeach.setNotificationDate(null); // Automatically set by the DAO's SQL statement
+
+            // Update the teaching request
+            requestToTeachDAO.update(requestToTeach);
 
             // Redirect or forward to appropriate page after rejecting the request
             request.setAttribute("message", "The request has been rejected.");
@@ -211,6 +244,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
     }
+
 
     protected void sendInstitutionNameList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -230,6 +264,77 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
                     .log(Level.SEVERE, "Error fetching institution names", e);
         }
     }
+    
+    /**
+     * Displays the form for updating the institution profile.
+     */
+    private void showEditProfileForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int institutionID = Integer.parseInt(request.getParameter("institutionID"));
+
+        try {
+            AcademicInstitution institution = academicInstitutionDAO.getByID(institutionID);
+            request.setAttribute("institution", institution);
+        } catch (SQLException e) {
+            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, null, e);
+            request.setAttribute("error", "Error loading institution details.");
+        }
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_profile.jsp");
+        dispatcher.forward(request, response);
+    }
+    
+    /**
+     * Updates the academic institution's profile.
+     */
+    private void updateProfile(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int institutionID = Integer.parseInt(request.getParameter("institutionID"));
+        String address = request.getParameter("address");
+        String city = request.getParameter("city");
+        String state = request.getParameter("state");
+        String zip = request.getParameter("zip");
+        String country = request.getParameter("country");
+
+        try {
+            // Update institution address
+            academicInstitutionDAO.updateAddress(institutionID, address, city, state, zip, country);
+
+            // Add course offerings
+            String[] courseTitles = request.getParameterValues("courseTitles");
+            String[] courseCodes = request.getParameterValues("courseCodes");
+            String[] termIDs = request.getParameterValues("termIDs");
+
+            if (courseTitles != null && courseCodes != null && termIDs != null) {
+                for (int i = 0; i < courseTitles.length; i++) {
+                    Course course = new Course(
+                        0, // Auto-generated course ID
+                        institutionID,
+                        courseTitles[i],
+                        courseCodes[i],
+                        Integer.parseInt(termIDs[i]),
+                        "", // Optional: course outline
+                        "", // Optional: schedule
+                        "In-Person", // Default delivery method
+                        "", // Optional: preferred qualifications
+                        0.0 // Default compensation
+                    );
+                    academicInstitutionDAO.addCourseOffering(course);
+                }
+            }
+
+            request.setAttribute("message", "Profile updated successfully!");
+        } catch (SQLException e) {
+            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, null, e);
+            request.setAttribute("error", "Error updating profile.");
+        }
+
+        // Redirect back to profile page or dashboard
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
+        dispatcher.forward(request, response);
+    }
+
+
     
     /**
      * Called when the servlet is destroyed (shutting down), closes the database connection pool.
