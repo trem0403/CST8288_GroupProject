@@ -54,6 +54,7 @@
                         </div>
 
 
+                        <label for="institutionNameID">Current institution:</label>
                         <select name="institutionNameID">
                             <%
                                 List<InstitutionName> institutions = (List<InstitutionName>) request.getAttribute("institutionNameList");
