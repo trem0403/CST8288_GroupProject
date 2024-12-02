@@ -57,6 +57,19 @@
 
                         <input type="submit" value="Register" />
                     </form>
+                    <h1>Accept/Reject Teaching Request</h1>
+                    
+                    <form action="/acceptRequest" method="post">
+                        <input type="hidden" name="requestID" value="${request.id}">
+                        <input type="hidden" name="institutionName" value="${institution.name}">
+                        <button type="submit" name="action" value="accept">Accept</button>
+                    </form>
+                    
+                    <form action="/rejectRequest" method="post">
+                        <input type="hidden" name="requestID" value="${request.id}">
+                        <input type="hidden" name="institutionName" value="${institution.name}">
+                        <button type="submit" name="action" value="reject">Reject</button>
+                    </form>
                 </div>
             </div>
         </div>

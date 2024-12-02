@@ -4,6 +4,7 @@ import dao.DatabaseConnectionUtil;
 import dao.AcademicInstitutionDAO;
 import model.AcademicInstitution;
 import dao.InstitutionNameDAO;
+import dao.RequestToTeachDAO;
 import model.InstitutionName;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -28,6 +29,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
 
     private AcademicInstitutionDAO academicInstitutionDAO;
     private InstitutionNameDAO institutionNameDAO;
+    private RequestToTeachDAO requestToTeachDAO;
 
     public AcademicInstitutionRegistrationServlet() {
         super();
@@ -44,6 +46,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
         // Initialize the DAO's
         academicInstitutionDAO = new AcademicInstitutionDAO();
         institutionNameDAO = new InstitutionNameDAO();
+        requestToTeachDAO = new RequestToTeachDAO();
     }
 
     /**
@@ -160,6 +163,51 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             }
             // Forward to a success page
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_details.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+    //accept the teaching request
+    private void acceptRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int requestID = Integer.parseInt(request.getParameter("requestID"));
+        String institutionName = request.getParameter("institutionName");
+
+        try {
+            // Update the request status to 'Accepted'
+            requestToTeachDAO.updateRequestStatus(requestID, "Accepted", "Your request has been accepted by " + institutionName);
+
+            // Redirect or forward to appropriate page after accepting the request
+            request.setAttribute("message", "The request has been accepted successfully!");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
+            dispatcher.forward(request, response);
+
+        } catch (SQLException e) {
+            request.setAttribute("error", "Failed to accept the request. Please try again.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+    
+    //reject the teaching request
+    private void rejectRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int requestID = Integer.parseInt(request.getParameter("requestID"));
+        String institutionName = request.getParameter("institutionName");
+
+        try {
+            // Update the request status to 'Rejected'
+            requestToTeachDAO.updateRequestStatus(requestID, "Rejected", "Your request has been rejected by " + institutionName);
+
+            // Redirect or forward to appropriate page after rejecting the request
+            request.setAttribute("message", "The request has been rejected.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
+            dispatcher.forward(request, response);
+
+        } catch (SQLException e) {
+            request.setAttribute("error", "Failed to reject the request. Please try again.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
             dispatcher.forward(request, response);
         }
     }
