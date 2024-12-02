@@ -63,7 +63,13 @@ public class ProfessionalProfileServlet extends HttpServlet {
         }
         
 
-        int userID = (Integer) session.getAttribute("userID");
+         int userID;
+        try {
+            userID = Integer.parseInt((String) session.getAttribute("userID"));
+        } catch (NumberFormatException e) {
+            throw new ServletException("Invalid user ID format", e);
+        }
+        
         String name = request.getParameter("name");
         int institutionID = Integer.parseInt(request.getParameter("institutionID"));
         String academicPosition = request.getParameter("academicPosition");

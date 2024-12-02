@@ -123,10 +123,10 @@ public class LoginServlet extends HttpServlet {
 
             switch (role) {
                 case "AcademicProfessional":
-                    response.sendRedirect("professionalRegister");
+                    response.sendRedirect("professionalProfile");
                     break;
                 case "AcademicInstitution":
-                    response.sendRedirect("institutionRegister");
+                    response.sendRedirect("InstitutionProfile");
                     break;
                 default:
                     break;

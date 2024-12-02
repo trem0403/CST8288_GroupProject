@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -161,6 +162,23 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
                 Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error creating institution", ex);
                 request.setAttribute("error", "Failed to register institution. Please try again.");
             }
+            
+            String userID = null;
+            
+            // Fetch userID for session handling
+            try {
+                userID = userDAO.getUserID(email, password);
+            } catch (SQLException ex) {
+                Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            // After successful registration and fetching userID
+            HttpSession session = request.getSession();
+            session.setAttribute("userID", userID); // Store userID in session
+            session.setAttribute("role", "AcademicProfessional"); // Store role in session
+
+            response.sendRedirect("institutionProfile"); // Redirect to profile setup
+            
             // Forward to a success page
             request.getRequestDispatcher("WEB-INF/views/academic_institution_details.jsp").forward(request, response);
         }
