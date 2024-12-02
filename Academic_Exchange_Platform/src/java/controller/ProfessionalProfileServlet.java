@@ -1,0 +1,84 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package controller;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.SQLException;
+import model.AcademicProfessional;
+import dao.AcademicProfessionalDAO;
+import javax.servlet.http.HttpSession;
+import model.AcademicProfessional;
+/**
+ *
+ * @author Sancheaz + Ethan
+ */
+@WebServlet("/professionalProfile")
+public class ProfessionalProfileServlet extends HttpServlet {
+    private AcademicProfessionalDAO academicProfessionalDAO;
+
+    @Override
+    public void init() throws ServletException {
+        academicProfessionalDAO = new AcademicProfessionalDAO();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false); // Do not create a new session
+        if (session == null || session.getAttribute("userID") == null) {
+            response.sendRedirect("WEB-INF/views/login.jsp"); // Redirect to login if not authenticated
+            return;
+        }
+
+        int userID;
+        try {
+            userID = Integer.parseInt((String) session.getAttribute("userID"));
+        } catch (NumberFormatException e) {
+            throw new ServletException("Invalid user ID format", e);
+        }
+
+        try {
+            AcademicProfessional academicProfessional = academicProfessionalDAO.getByID(userID);
+            request.setAttribute("academicProfessional", academicProfessional);
+            request.getRequestDispatcher("WEB-INF/views/academic_professional_details.jsp").forward(request, response);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Error fetching profile", e);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userID") == null) {
+            response.sendRedirect("WEB-INF/views/login.jsp");
+            return;
+        }
+        
+
+        int userID = (Integer) session.getAttribute("userID");
+        String name = request.getParameter("name");
+        int institutionID = Integer.parseInt(request.getParameter("institutionID"));
+        String academicPosition = request.getParameter("academicPosition");
+        String currentPositionAtInstitution = request.getParameter("currentPositionAtInstitution");
+        String educationBackground = request.getParameter("educationBackground");
+        String areaOfExpertise = request.getParameter("areaOfExpertise");
+
+        AcademicProfessional updatedProfile = new AcademicProfessional(userID, name, institutionID, academicPosition, currentPositionAtInstitution, educationBackground, areaOfExpertise);
+
+        try {
+            academicProfessionalDAO.update(updatedProfile);
+            response.sendRedirect("WEB-INF/views/professionalRegisterSuccess.jsp"); // Redirect to success page
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Error updating profile", e);
+        }
+    }
+}

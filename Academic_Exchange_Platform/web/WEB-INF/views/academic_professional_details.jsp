@@ -1,17 +1,29 @@
+<%@page import="model.AcademicProfessional"%>
+<%@ page language="java" contentType="text/html;" pageEncoding="UTF-8"%>
 <%-- 
     Document   : academic_professional_details
-    Created on : Nov 30, 2024, 11:16:42 a.m.
-    Author     : Ripperz KOF
+    Created on : Dec. 1, 2024, 11:41:11 p.m.
+    Author     : Sancheaz
 --%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <h1>Professional Details page!!</h1>
-    </body>
+<head>
+    <title>Complete Profile</title>
+</head>
+<body>
+    <h2>Complete Your Profile</h2>
+
+    <%
+        AcademicProfessional academicProfessional = (AcademicProfessional) request.getAttribute("academicProfessional");
+    %>
+
+    <form action="<%= request.getContextPath() %>/professionalProfile" method="post">
+        Name: <input type="text" name="name" value="<%= academicProfessional != null ? academicProfessional.getName() : "" %>" required><br>
+        Current Position: <input type="text" name="currentPositionAtInstitution" value="<%= academicProfessional != null ? academicProfessional.getCurrentPositionAtInstitution() : "" %>" required><br>
+        Education Background: 
+        <textarea name="educationBackground" required><%= academicProfessional != null ? academicProfessional.getEducationBackground() : "" %></textarea><br>
+        Area of Expertise: <input type="text" name="areaOfExpertise" value="<%= academicProfessional != null ? academicProfessional.getAreaOfExpertise() : "" %>" required><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
 </html>
