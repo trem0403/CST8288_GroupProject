@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import model.AcademicProfessional;
 import dao.AcademicProfessionalDAO;
+import dao.UserDAO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 import model.AcademicProfessional;
 /**
@@ -21,10 +24,12 @@ import model.AcademicProfessional;
 @WebServlet("/professionalProfile")
 public class ProfessionalProfileServlet extends HttpServlet {
     private AcademicProfessionalDAO academicProfessionalDAO;
+    private UserDAO userDAO;
 
     @Override
     public void init() throws ServletException {
         academicProfessionalDAO = new AcademicProfessionalDAO();
+        userDAO = new UserDAO();
     }
 
     @Override
@@ -63,25 +68,36 @@ public class ProfessionalProfileServlet extends HttpServlet {
         }
         
 
-         int userID;
+        int userID;
         try {
             userID = Integer.parseInt((String) session.getAttribute("userID"));
         } catch (NumberFormatException e) {
             throw new ServletException("Invalid user ID format", e);
         }
         
+        
         String name = request.getParameter("name");
-        int institutionID = Integer.parseInt(request.getParameter("institutionID"));
-        String academicPosition = request.getParameter("academicPosition");
         String currentPositionAtInstitution = request.getParameter("currentPositionAtInstitution");
         String educationBackground = request.getParameter("educationBackground");
         String areaOfExpertise = request.getParameter("areaOfExpertise");
 
-        AcademicProfessional updatedProfile = new AcademicProfessional(userID, name, institutionID, academicPosition, currentPositionAtInstitution, educationBackground, areaOfExpertise);
+        AcademicProfessional updatedProfile = null;
+        
+       
+        try {
+            updatedProfile = academicProfessionalDAO.getByID(userID);
+        } catch (SQLException ex) {
+            Logger.getLogger(ProfessionalProfileServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        updatedProfile.setName(name);
+        updatedProfile.setCurrentPositionAtInstitution(currentPositionAtInstitution);
+        updatedProfile.setEducationBackground(educationBackground);
+        updatedProfile.setAreaOfExpertise(areaOfExpertise);
 
         try {
             academicProfessionalDAO.update(updatedProfile);
-            response.sendRedirect("WEB-INF/views/professionalRegisterSuccess.jsp"); // Redirect to success page
+            request.getRequestDispatcher("WEB-INF/views/professionalRegisterSuccess.jsp").forward(request, response);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new ServletException("Error updating profile", e);

@@ -126,7 +126,7 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
                 hasError = true;
             }
         } catch (SQLException ex) {
-            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error with query", ex);
+            Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName()).log(Level.SEVERE, "Error with query", ex);
             emailError = "An error occurred while checking the email. Please try again.";
             hasError = true;
         }
@@ -188,7 +188,7 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
                 academicProfessionalDAO.create(academicProfessional);
                 request.setAttribute("message", "Professional successfully registered!");
             } catch (SQLException ex) {
-                Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error creating professional", ex);
+                Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName()).log(Level.SEVERE, "Error creating professional", ex);
                 request.setAttribute("error", "Failed to register professional. Please try again.");
             }
             

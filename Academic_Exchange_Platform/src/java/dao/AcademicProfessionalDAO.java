@@ -141,11 +141,9 @@ public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional>
     @Override
     public void update(AcademicProfessional professional) throws SQLException {
         String updateUserSQL = "UPDATE User SET email = ?, password = ?, role = ? WHERE userID = ?";
-        String updateProfessionalSQL = "UPDATE AcademicProfessional SET name = ?, institutionID = ?, academicPosition = ?, currentPositionAtInstitution = ?, educationBackground = ?, areaOfExpertise = ? WHERE userID = ?";
+        String updateProfessionalSQL = "UPDATE AcademicProfessional SET name = ?, institutionID = ?, academicPosition = ?, currentPositionAtInstitution = ?, educationBackground = ?, areaOfExpertise = ? WHERE professionalID = ?";
 
-        try (Connection conn = DatabaseConnectionUtil.getConnection();
-             PreparedStatement updateUserStmt = conn.prepareStatement(updateUserSQL);
-             PreparedStatement updateProfessionalStmt = conn.prepareStatement(updateProfessionalSQL)) {
+        try (Connection conn = DatabaseConnectionUtil.getConnection(); PreparedStatement updateUserStmt = conn.prepareStatement(updateUserSQL); PreparedStatement updateProfessionalStmt = conn.prepareStatement(updateProfessionalSQL)) {
 
             updateUserStmt.setString(1, professional.getEmail());
             updateUserStmt.setString(2, professional.getPassword());
@@ -156,11 +154,11 @@ public class AcademicProfessionalDAO implements GenericDAO<AcademicProfessional>
             updateProfessionalStmt.setString(1, professional.getName());
             updateProfessionalStmt.setInt(2, professional.getInstitutionID());
             updateProfessionalStmt.setString(3, professional.getAcademicPosition());
-            updateProfessionalStmt.setString(3, professional.getCurrentPositionAtInstitution());
-            updateProfessionalStmt.setString(4, professional.getEducationBackground());
-            updateProfessionalStmt.setString(5, professional.getAreaOfExpertise());
-            updateProfessionalStmt.setInt(6, professional.getUserID());
+            updateProfessionalStmt.setString(4, professional.getCurrentPositionAtInstitution());
+            updateProfessionalStmt.setString(5, professional.getEducationBackground());
+            updateProfessionalStmt.setString(6, professional.getAreaOfExpertise());
+            updateProfessionalStmt.setInt(7, professional.getUserID());
             updateProfessionalStmt.executeUpdate();
         }
-    }     
+    }
 } // end of class

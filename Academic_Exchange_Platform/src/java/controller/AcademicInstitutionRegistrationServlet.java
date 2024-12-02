@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author Ethan Tremblay
  */
-@WebServlet(name = "AcademicInstitutionServlet", urlPatterns = "/institutionRegister")
+@WebServlet(name = "AcademicInstitutionRegistrationServlet", urlPatterns = "/institutionRegister")
 public class AcademicInstitutionRegistrationServlet extends HttpServlet {
 
 
@@ -175,9 +175,9 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             // After successful registration and fetching userID
             HttpSession session = request.getSession();
             session.setAttribute("userID", userID); // Store userID in session
-            session.setAttribute("role", "AcademicProfessional"); // Store role in session
+            session.setAttribute("role", "AcademicInstitution"); // Store role in session
 
-            response.sendRedirect("institutionProfile"); // Redirect to profile setup
+            //response.sendRedirect("institutionProfile"); // Redirect to profile setup
             
             // Forward to a success page
             request.getRequestDispatcher("WEB-INF/views/academic_institution_details.jsp").forward(request, response);

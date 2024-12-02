@@ -126,7 +126,7 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect("professionalProfile");
                     break;
                 case "AcademicInstitution":
-                    response.sendRedirect("InstitutionProfile");
+                    request.getRequestDispatcher("WEB-INF/views/academic_institution_details.jsp").forward(request, response);
                     break;
                 default:
                     break;
