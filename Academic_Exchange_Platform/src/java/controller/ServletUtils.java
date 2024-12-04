@@ -116,7 +116,7 @@ public class ServletUtils {
      * @throws IOException if an I/O error occurs
      */
     public static int getUserIDFromSession(HttpServletRequest request) throws ServletException, IOException {
-        HttpSession session = request.getSession(false); // Fetch the existing session (if any)
+        HttpSession session = request.getSession(false); // Get the existing session without creating a new one (null if no session exists)
 
         if (session == null || session.getAttribute("userID") == null) {
             LOGGER.warning("Session is null or userID not found in session.");
@@ -141,7 +141,7 @@ public class ServletUtils {
      * @throws IOException if an I/O error occurs
      */
     public static String getRoleFromSession(HttpServletRequest request) throws ServletException, IOException {
-        HttpSession session = request.getSession(false); // Fetch the existing session (if any)
+        HttpSession session = request.getSession(false); // Get the existing session without creating a new one (null if no session exists)
 
         if (session == null || session.getAttribute("role") == null) {
             LOGGER.warning("Session is null or role not found in session.");
@@ -183,7 +183,7 @@ public class ServletUtils {
      * @throws IOException if an I/O error occurs
      */
     public static boolean validateSession(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false); // Fetch the existing session (if any)
+        HttpSession session = request.getSession(false); // Get the existing session without creating a new one (null if no session exists)
 
         // Check if the session is null or doesn't contain a userID
         if (session == null || session.getAttribute("userID") == null) {

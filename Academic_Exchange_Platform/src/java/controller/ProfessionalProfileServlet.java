@@ -57,20 +57,11 @@ public class ProfessionalProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Get the existing session without creating a new one (null if no session exists)
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userID") == null) {
-            // Redirect to login page if user is not authenticated
-            response.sendRedirect("login");
-            return;
-        }
+        // Validate session
+        ServletUtils.validateSession(request, response);
 
-        int userID = 0;
-        try {
-            // Attempt to parse the userID from the session attribute
-            userID = (Integer) session.getAttribute("userID");
-        } catch (NumberFormatException ex) {
-            Logger.getLogger(ProfessionalProfileServlet.class.getName()).log(Level.SEVERE, "Unable to fetch userID", ex);
-        }
+        // Fetch userID from session
+        int userID = ServletUtils.getUserIDFromSession(request);
 
         try {
             // Fetch the academic professional's profile by userID
@@ -95,21 +86,13 @@ public class ProfessionalProfileServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Get the existing session without creating a new one (null if no session exists)
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userID") == null) {
-            // Redirect to login page if user is not authenticated
-            response.sendRedirect("login");
-            return;
-        }
+        
+        // Validate session
+        ServletUtils.validateSession(request, response);
 
-        int userID = 0;
-        try {
-            // Attempt to parse the userID from the session attribute
-            userID = (Integer) session.getAttribute("userID");
-        } catch (NumberFormatException ex) {
-            Logger.getLogger(ProfessionalProfileServlet.class.getName()).log(Level.SEVERE, "Unable to fetch userID", ex);
-        }
+        // Fetch userID from session
+        int userID = ServletUtils.getUserIDFromSession(request);
+        
 
         // Retrieve updated profile data from the form
         String name = request.getParameter("name");
