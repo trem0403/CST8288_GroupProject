@@ -163,7 +163,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
                 request.setAttribute("error", "Failed to register institution. Please try again.");
             }
             
-            String userID = null;
+            int userID = -1;
             
             // Fetch userID for session handling
             try {

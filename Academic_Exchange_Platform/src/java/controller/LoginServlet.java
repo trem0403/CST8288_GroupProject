@@ -22,6 +22,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -120,6 +121,20 @@ public class LoginServlet extends HttpServlet {
                 Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, "Error fetching user role", ex);
                 request.setAttribute("error", "Failed to register professional. Please try again.");
             }
+            
+            int userID = -1;
+            
+            // Fetch userID for session handling
+            try {
+                userID = userDAO.getUserID(email, password);
+            } catch (SQLException ex) {
+                Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            // After successful registration and fetching userID
+            HttpSession session = request.getSession();
+            session.setAttribute("userID", userID); // Store userID in session
+            session.setAttribute("role", role); // Store role in session
 
             switch (role) {
                 case "AcademicProfessional":

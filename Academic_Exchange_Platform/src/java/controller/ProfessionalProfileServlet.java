@@ -20,9 +20,10 @@ import javax.servlet.http.HttpSession;
 import model.AcademicProfessional;
 
 /**
- * Servlet implementation class ProfessionalProfileServlet.
- * This servlet is mapped to handle requests for viewing and updating an academic professional's profile.
- * 
+ * Servlet implementation class ProfessionalProfileServlet. This servlet is
+ * mapped to handle requests for viewing and updating an academic professional's
+ * profile.
+ *
  * @author Sancheaz + Ethan
  */
 @WebServlet("/professionalProfile")
@@ -65,7 +66,7 @@ public class ProfessionalProfileServlet extends HttpServlet {
         int userID = 0;
         try {
             // Attempt to parse the userID from the session attribute
-            userID = Integer.parseInt((String) session.getAttribute("userID"));
+            userID = (Integer) session.getAttribute("userID");
         } catch (NumberFormatException ex) {
             Logger.getLogger(ProfessionalProfileServlet.class.getName()).log(Level.SEVERE, "Unable to fetch userID", ex);
         }
@@ -104,7 +105,7 @@ public class ProfessionalProfileServlet extends HttpServlet {
         int userID = 0;
         try {
             // Attempt to parse the userID from the session attribute
-            userID = Integer.parseInt((String) session.getAttribute("userID"));
+            userID = (Integer) session.getAttribute("userID");
         } catch (NumberFormatException ex) {
             Logger.getLogger(ProfessionalProfileServlet.class.getName()).log(Level.SEVERE, "Unable to fetch userID", ex);
         }

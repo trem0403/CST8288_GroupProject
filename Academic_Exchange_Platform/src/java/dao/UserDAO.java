@@ -94,25 +94,25 @@ public class UserDAO {
      * 
      * @param email the user's email
      * @param password the user's password
-     * @return the user's id as a String, or null if the user is not found. 
+     * @return the user's id as an int, or -1 if the user is not found. 
      * @throws SQLException if a database access error occurs
      */
-    public String getUserID(String email, String password) throws SQLException {
-        String role = null;
-        String getRoleSQL = "SELECT userID FROM User WHERE email = ? AND password = ?";
+    public int getUserID(String email, String password) throws SQLException {
+        int userID = -1;
+        String getuserIDSQL = "SELECT userID FROM User WHERE email = ? AND password = ?";
         
         try (Connection conn = DatabaseConnectionUtil.getConnection(); 
-             PreparedStatement stmt = conn.prepareStatement(getRoleSQL)) {
+             PreparedStatement stmt = conn.prepareStatement(getuserIDSQL)) {
             stmt.setString(1, email);
             stmt.setString(2, password);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) { // Check if a row is available
-                    role = rs.getString("userID"); // Fetch the userID
+                    userID = rs.getInt("userID"); // Fetch the userID
                 }
             }
         }
-        return role; // Returns null if no matching user is found
+        return userID; // Returns -1 if no matching user is found
     }
     
     

@@ -192,7 +192,7 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
                 request.setAttribute("error", "Failed to register professional. Please try again.");
             }
             
-            String userID = null;
+            int userID = -1;
             
             // Fetch userID for session handling
             try {
