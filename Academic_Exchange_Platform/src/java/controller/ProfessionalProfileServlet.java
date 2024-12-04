@@ -17,7 +17,6 @@ import dao.DatabaseConnectionUtil;
 import dao.UserDAO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.http.HttpSession;
 import model.AcademicProfessional;
 
 /**
@@ -103,7 +102,7 @@ public class ProfessionalProfileServlet extends HttpServlet {
         AcademicProfessional updatedProfile = null;
 
         try {
-            // Fetch the existing profile to update
+            // Fetch the current profile used for the session to update
             updatedProfile = academicProfessionalDAO.getByID(userID);
         } catch (SQLException ex) {
             Logger.getLogger(ProfessionalProfileServlet.class.getName()).log(Level.SEVERE, null, ex);

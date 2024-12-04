@@ -11,7 +11,7 @@
     <title>Complete Profile</title>
 </head>
 <body>
-    <h2>Complete Your Profile</h2>
+    <h2>Complete Your Professional Profile</h2>
 
     <%
         AcademicProfessional academicProfessional = (AcademicProfessional) request.getAttribute("academicProfessional");
