@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import model.AcademicProfessional;
 import dao.AcademicProfessionalDAO;
+import dao.DatabaseConnectionUtil;
 import dao.UserDAO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -141,4 +142,15 @@ public class ProfessionalProfileServlet extends HttpServlet {
 
         }
     }
+    
+     /**
+     * Called when the servlet is destroyed (shutting down), closes the database
+     * connection pool.
+     */
+    @Override
+    public void destroy() {
+        // Close the connection pool to release resources
+        DatabaseConnectionUtil.closeDataSource();
+    }
+    
 } // end of class

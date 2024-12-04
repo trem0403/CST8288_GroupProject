@@ -155,29 +155,19 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             AcademicInstitution academicInstitution = new AcademicInstitution(email, password, role, institutionNameID);
 
             // Insert into database
-            try {
-                academicInstitutionDAO.create(academicInstitution);
-                request.setAttribute("message", "Institution successfully registered!");
-            } catch (SQLException ex) {
-                Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error creating institution", ex);
-                request.setAttribute("error", "Failed to register institution. Please try again.");
-            }
-            
-            int userID = -1;
+            ServletUtils.insertUser(academicInstitution);
             
             // Fetch userID for session handling
-            try {
-                userID = userDAO.getUserID(email, password);
-            } catch (SQLException ex) {
-                Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            int userID = ServletUtils.getUserID(email, password);
             
-            // After successful registration and fetching userID
-            HttpSession session = request.getSession();
-            session.setAttribute("userID", userID); // Store userID in session
-            session.setAttribute("role", "AcademicInstitution"); // Store role in session
-
-            //response.sendRedirect("institutionProfile"); // Redirect to profile setup
+            /*
+            * After successful registration and fetching userID,
+            * Store useriD and role into a session.
+            */
+            ServletUtils.storeUserInSession(request, userID, role);
+            
+            // Redirect to profile setup
+            //response.sendRedirect("institutionProfile"); 
             
             // Forward to a success page
             request.getRequestDispatcher("WEB-INF/views/academic_institution_details.jsp").forward(request, response);
@@ -201,6 +191,16 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName())
                     .log(Level.SEVERE, "Error fetching institution names", e);
         }
+    }
+    
+     /**
+     * Called when the servlet is destroyed (shutting down), closes the database
+     * connection pool.
+     */
+    @Override
+    public void destroy() {
+        // Close the connection pool to release resources
+        DatabaseConnectionUtil.closeDataSource();
     }
  
 } //end of class

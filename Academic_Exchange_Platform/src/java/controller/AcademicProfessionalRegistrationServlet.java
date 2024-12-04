@@ -18,13 +18,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -184,34 +182,19 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
             AcademicProfessional academicProfessional = new AcademicProfessional(email, password, role, name, institutionID, academicPosition);
 
             // Insert into database
-            try {
-                academicProfessionalDAO.create(academicProfessional);
-                request.setAttribute("message", "Professional successfully registered!");
-            } catch (SQLException ex) {
-                Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName()).log(Level.SEVERE, "Error creating professional", ex);
-                request.setAttribute("error", "Failed to register professional. Please try again.");
-            }
-            
-            int userID = -1;
+            ServletUtils.insertUser(academicProfessional);
             
             // Fetch userID for session handling
-            try {
-                userID = userDAO.getUserID(email, password);
-            } catch (SQLException ex) {
-                Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            int userID = ServletUtils.getUserID(email, password);
             
-            // After successful registration and fetching userID
-            HttpSession session = request.getSession();
-            session.setAttribute("userID", userID); // Store userID in session
-            session.setAttribute("role", "AcademicProfessional"); // Store role in session
-
-            response.sendRedirect("professionalProfile"); // Redirect to profile setup
-
+            /*
+            * After successful registration and fetching userID,
+            * Store useriD and role into a session.
+            */
+            ServletUtils.storeUserInSession(request, userID, role);
             
-            
-            // Forward to a success page
-            //request.getRequestDispatcher("WEB-INF/views/academic_professional_details.jsp").forward(request, response);
+            // Redirect to profile setup
+            response.sendRedirect("professionalProfile"); 
         }
     }
 
@@ -233,4 +216,14 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
                     .log(Level.SEVERE, "Error fetching institution names", e);
         }
     }  
+    
+    /**
+     * Called when the servlet is destroyed (shutting down), closes the database
+     * connection pool.
+     */
+    @Override
+    public void destroy() {
+        // Close the connection pool to release resources
+        DatabaseConnectionUtil.closeDataSource();
+    }
 } //end of class

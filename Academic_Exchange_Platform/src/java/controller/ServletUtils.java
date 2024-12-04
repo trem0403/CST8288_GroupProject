@@ -35,12 +35,8 @@ public class ServletUtils {
      * Inserts a user into the appropriate DAO based on their role.
      *
      * @param user the user object to insert
-     * @param response the HttpServletResponse object
-     * @param request the HttpServletRequest object
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
      */
-    public static void insertUser(User user, HttpServletResponse response, HttpServletRequest request) throws ServletException, IOException {
+    public static void insertUser(User user) {
         String role = user.getRole(); // Retrieve the role of the user
 
         // Determine which DAO to use based on the role
@@ -49,7 +45,6 @@ public class ServletUtils {
                 try {
                     // Cast and insert as AcademicProfessional
                     academicProfessionalDAO.create((AcademicProfessional) user);
-                    request.setAttribute("message", "Professional successfully registered!");
                 } catch (SQLException ex) {
                     LOGGER.log(Level.SEVERE, "Error creating professional", ex);
                 }
@@ -59,7 +54,6 @@ public class ServletUtils {
                 try {
                     // Cast and insert as AcademicInstitution
                     academicInstitutionDAO.create((AcademicInstitution) user);
-                    request.setAttribute("message", "Institution successfully registered!");
                 } catch (SQLException ex) {
                     LOGGER.log(Level.SEVERE, "Error creating institution", ex);
                 }
@@ -79,7 +73,9 @@ public class ServletUtils {
      * @return the userID if found, or -1 if not found or an error occurs
      */
     public static int getUserID(String email, String password) {
+        
         int userID = -1;
+      
 
         try {
             // Query the DAO for the userID using the provided credentials

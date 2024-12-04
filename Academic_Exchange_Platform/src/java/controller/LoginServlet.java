@@ -8,6 +8,7 @@ import dao.AcademicProfessionalDAO;
 import model.AcademicProfessional;
 
 import dao.AcademicInstitutionDAO;
+import dao.DatabaseConnectionUtil;
 import model.AcademicInstitution;
 
 import dao.UserDAO;
@@ -81,8 +82,6 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        String role = null;
-
         // Initialize error messages
         String loginError = null;
 
@@ -112,30 +111,19 @@ public class LoginServlet extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
             return;
         } else {
-            try {
-                // Continue with the login process (e.g., Go to home page)
-
-                // Fetch user role
-                role = userDAO.getRole(email, password);
-            } catch (SQLException ex) {
-                Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, "Error fetching user role", ex);
-                request.setAttribute("error", "Failed to register professional. Please try again.");
-            }
+            // Continue with the login process (e.g., Go to home page)
             
-            int userID = -1;
+            // Fetch userID and role for session handling
+            int userID = ServletUtils.getUserID(email, password);
+            String role = ServletUtils.getRole(email, password);
             
-            // Fetch userID for session handling
-            try {
-                userID = userDAO.getUserID(email, password);
-            } catch (SQLException ex) {
-                Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            /*
+            * After successful registration and fetching userID and role,
+            * Store useriD and role into a session.
+            */
+            ServletUtils.storeUserInSession(request, userID, role);
             
-            // After successful registration and fetching userID
-            HttpSession session = request.getSession();
-            session.setAttribute("userID", userID); // Store userID in session
-            session.setAttribute("role", role); // Store role in session
-
+            // Redirect to servlet based on user role
             switch (role) {
                 case "AcademicProfessional":
                     response.sendRedirect("professionalProfile");
@@ -147,5 +135,15 @@ public class LoginServlet extends HttpServlet {
                     break;
             } // end of switch-case
         }
+    }
+    
+     /**
+     * Called when the servlet is destroyed (shutting down), closes the database
+     * connection pool.
+     */
+    @Override
+    public void destroy() {
+        // Close the connection pool to release resources
+        DatabaseConnectionUtil.closeDataSource();
     }
 } // end of class
