@@ -136,7 +136,7 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
         }
         
         // Check if academic position format is valid
-        if (!name.matches("^[A-Za-z\\s]+$")) {
+        if (!academicPositionError.matches("^[A-Za-z\\s]+$")) {
             academicPositionError = "Academic Position must only use letters and spaces";
             hasError = true;
         }
