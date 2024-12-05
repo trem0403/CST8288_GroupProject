@@ -21,7 +21,7 @@ CREATE TABLE InstitutionName (
 -- Address Table
 CREATE TABLE Address (
   zip VARCHAR(20) PRIMARY KEY,
-  Country VARCHAR(255) NOT NULL,
+  country VARCHAR(255) NOT NULL,
   state VARCHAR(255) NOT NULL,
   city VARCHAR(255) NOT NULL,
   street VARCHAR(255) NOT NULL
@@ -64,17 +64,17 @@ CREATE TABLE Term (
 CREATE TABLE Course (
   courseID INT AUTO_INCREMENT PRIMARY KEY,
   institutionID INT NOT NULL,
-  Title VARCHAR(255) NOT NULL,
+  title VARCHAR(255) NOT NULL,
   code VARCHAR(50) NOT NULL,
-  TermID INT NOT NULL,
+  termID INT NOT NULL,
   outline TEXT NOT NULL,
-  Schedule ENUM('Morning', 'Afternoon', 'Evening') NOT NULL,
-  DeliveryMethod ENUM('In-Person', 'Remote', 'Hybrid') NOT NULL,
-  PreferredQualifications TEXT NOT NULL,
-  Compensation DOUBLE NOT NULL,
+  schedule ENUM('Morning', 'Afternoon', 'Evening') NOT NULL,
+  deliveryMethod ENUM('In-Person', 'Remote', 'Hybrid') NOT NULL,
+  preferredQualifications TEXT NOT NULL,
+  compensation DOUBLE NOT NULL,
   FOREIGN KEY (institutionID) REFERENCES AcademicInstitution(institutionID)
     ON DELETE CASCADE,
-  FOREIGN KEY (TermID) REFERENCES Term(termID)
+  FOREIGN KEY (termID) REFERENCES Term(termID)
 );
 
 -- RequestToTeach Table
