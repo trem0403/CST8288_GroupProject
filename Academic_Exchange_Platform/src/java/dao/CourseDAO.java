@@ -49,9 +49,9 @@ public class CourseDAO implements GenericDAO<Course> {
     }
 
     /**
-     * Retrieves an InstitutionName entry by its ID.
+     * Retrieves an Course entry by its ID.
      *
-     * @param courseID The ID of the institution name to retrieve.
+     * @param courseID The ID of the Course to retrieve.
      * @return The Course object, or null if not found.
      * @throws SQLException If a database access error occurs.
      */
@@ -109,9 +109,9 @@ public class CourseDAO implements GenericDAO<Course> {
     }
 
     /**
-     * Updates an existing InstitutionName entry in the database.
+     * Updates an existing Course entry in the database.
      *
-     * @param institutionName The InstitutionName object containing updated
+     * @param course The Course object containing updated
      * data.
      * @throws SQLException If a database access error occurs.
      */
