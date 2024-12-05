@@ -12,7 +12,6 @@ import model.InstitutionName;
 
 import dao.UserDAO;
 
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -31,13 +30,10 @@ import javax.servlet.annotation.WebServlet;
 @WebServlet(name = "AcademicProfessionalRegistrationServlet", urlPatterns = "/professionalRegister")
 public class AcademicProfessionalRegistrationServlet extends HttpServlet {
 
-
     private AcademicProfessionalDAO academicProfessionalDAO;
     private AcademicInstitutionDAO academicInstitutionDAO;
     private InstitutionNameDAO institutionNameDAO;
     private UserDAO userDAO;
-
-    
 
     /**
      * Initializes the servlet and sets up the DAO instance. This method is
@@ -90,84 +86,45 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
         String password = request.getParameter("password");
         int institutionNameID = Integer.parseInt(request.getParameter("institutionNameID"));
         String academicPosition = request.getParameter("academicPosition");
-        
+
         // Fetch the institutionID based on the selected institutionNameID
         int institutionID = -1;
 
         // Define role explicitly
         String role = "AcademicProfessional";
 
-        // Initialize error messages
-        String nameError = null;
-        String emailError = null;
-        String passwordError = null;
-        String academicPositionError = null;
+        // Initialize and declare error messages
+        String nameError = ValidationUtils.nameValidation(name);
+        String emailError = ValidationUtils.emailValidation(email);
+        String passwordError = ValidationUtils.passwordValidation(password);
+        String academicPositionError = ValidationUtils.academicPositionValidation(academicPosition);
+        String institutionIDError = null;
 
-        boolean hasError = false;
-
-        // Check if name format is valid
-        if (!name.matches("^[A-Za-z\\s]+$")) {
-            nameError = "Name must only use letters and spaces";
-            hasError = true;
-        }
-
-        // Check if email format is valid
-        if (!email.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
-            emailError = "Invalid email format";
-            hasError = true;
-        }
-
-        // Check if email is already registered
-        try {
-            if (userDAO.isEmailAlreadyRegistered(email)) {
-                emailError = "The email is already registered. Please use a different email.";
-                hasError = true;
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName()).log(Level.SEVERE, "Error with query", ex);
-            emailError = "An error occurred while checking the email. Please try again.";
-            hasError = true;
-        }
-
-        // Check if password length is valid
-        if (password.length() < 6) {
-            passwordError = "Password must be at least 6 characters";
-            hasError = true;
-        }
-        
-        // Check if academic position format is valid
-        if (!academicPositionError.matches("^[A-Za-z\\s]+$")) {
-            academicPositionError = "Academic Position must only use letters and spaces";
-            hasError = true;
-        }
-        
         // Fetch the institutionID based on the selected institutionNameID
         try {
             institutionID = academicInstitutionDAO.getInstitutionIDByNameID(institutionNameID);
             if (institutionID == -1) {
-                request.setAttribute("error", "Invalid Institution Name selection.");
-                hasError = true;
+                institutionIDError = "No Academic Institution account is linked to this institution.";
             }
         } catch (SQLException ex) {
             Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName())
                     .log(Level.SEVERE, "Error fetching institution ID", ex);
-            request.setAttribute("error", "An error occurred while fetching the institution ID.");
-            hasError = true;
+            institutionIDError = "An error occurred while fetching the institution ID.";
         }
 
         // If there are errors, set them as request attributes and forward back to the JSP
-        if (hasError) {
+        if (nameError != null || emailError != null || passwordError != null || academicPositionError != null || institutionIDError != null) {
             request.setAttribute("name-error", nameError);
             request.setAttribute("email-error", emailError);
             request.setAttribute("password-error", passwordError);
             request.setAttribute("academicPosition-error", academicPositionError);
+            request.setAttribute("institutionID-error", institutionIDError);
 
             // Add form data to preserve user input
             request.setAttribute("name", name);
             request.setAttribute("email", email);
             request.setAttribute("password", password);
             request.setAttribute("academicPosition", academicPosition);
-
 
             sendInstitutionNameList(request, response);
 
@@ -183,18 +140,18 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
 
             // Insert into database
             ServletUtils.insertUser(academicProfessional);
-            
+
             // Fetch userID for session handling
             int userID = ServletUtils.getUserID(email, password);
-            
+
             /*
             * After successful registration and fetching userID,
             * Store useriD and role into a session.
-            */
+             */
             ServletUtils.storeUserInSession(request, userID, role);
-            
+
             // Redirect to profile setup
-            response.sendRedirect("professionalProfile"); 
+            response.sendRedirect("professionalProfile");
         }
     }
 
@@ -215,8 +172,8 @@ public class AcademicProfessionalRegistrationServlet extends HttpServlet {
             Logger.getLogger(AcademicProfessionalRegistrationServlet.class.getName())
                     .log(Level.SEVERE, "Error fetching institution names", e);
         }
-    }  
-    
+    }
+
     /**
      * Called when the servlet is destroyed (shutting down), closes the database
      * connection pool.

@@ -8,13 +8,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import model.AcademicInstitution;
-import model.AcademicProfessional;
-import model.User;
+
 
 /**
  *
@@ -29,18 +23,16 @@ public class ValidationUtils {
     private static final AcademicProfessionalDAO academicProfessionalDAO = new AcademicProfessionalDAO();
     private static final AcademicInstitutionDAO academicInstitutionDAO = new AcademicInstitutionDAO();
 
-    
-    
     public static String emailValidation(String email) {
-        
+
         String emailError = null;
 
         // Check if email format is valid
         if (!email.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
             emailError = "Invalid email format";
-        } 
-        
-         // Check if email is already registered
+        }
+
+        // Check if email is already registered
         try {
             if (userDAO.isEmailAlreadyRegistered(email)) {
                 emailError = "The email is already registered. Please use a different email.";
@@ -49,40 +41,50 @@ public class ValidationUtils {
             Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error with query", ex);
             emailError = "An error occurred while checking the email. Please try again.";
         }
-        
-        
+
         return emailError;
     }
-    
+
     public static String passwordValidation(String password) {
 
+        String passwordError = null;
+
+        // Check if password length is valid
         if (password.length() < 6) {
-            return "Password must be at least 6 characters";
-        } else {
-            return null;
+            passwordError = "Password must be at least 6 characters";
         }
+
+        return passwordError;
+
     }
-    
+
     public static String nameValidation(String name) {
 
+        String nameError = null;
+
+        // Check if name format is valid
         if (!name.matches("^[A-Za-z\\s]+$")) {
-            return "Name must only use letters and spaces";
-        } else {
-            return null;
+            nameError = "Name must only use letters and spaces";
         }
+
+        return nameError;
     }
-    
+
     public static String academicPositionValidation(String academicPosition) {
 
-        if (!academicPosition.matches("^[A-Za-z\\s]+$")) {
-            return "Academic Position must only use letters and spaces";
-        } else {
-            return null;
-        }
-    }
-    
-    public static String institutionValidation(int institutionNameID) {
+        String academicPositionError = null;
+
         
+        // Check if academic position format is valid
+        if (!academicPosition.matches("^[A-Za-z\\s]+$")) {
+            academicPositionError =  "Academic Position must only use letters and spaces";
+        } 
+        
+        return academicPositionError;
+    }
+
+    public static String institutionValidation(int institutionNameID) {
+
         String institutionError = null;
 
         // Check if the institution is already registered
@@ -94,7 +96,7 @@ public class ValidationUtils {
             Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error checking institution", ex);
             institutionError = "An error occurred while checking the institution. Please try again.";
         }
-        
+
         return institutionError;
     }
 } // end of class
