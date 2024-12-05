@@ -20,7 +20,7 @@ CREATE TABLE InstitutionName (
 
 -- Address Table
 CREATE TABLE Address (
-  zip VARCHAR(20) PRIMARY KEY,
+  zip INT PRIMARY KEY,
   country VARCHAR(255) NOT NULL,
   state VARCHAR(255) NOT NULL,
   city VARCHAR(255) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE Address (
 CREATE TABLE AcademicInstitution (
   institutionID INT PRIMARY KEY,
   institutionNameID INT NOT NULL,
-  zip VARCHAR(20) UNIQUE,
+  zip INT,
   FOREIGN KEY (institutionID) REFERENCES User(userID)
    ON DELETE CASCADE,
   FOREIGN KEY (institutionNameID) REFERENCES InstitutionName(institutionNameID)
