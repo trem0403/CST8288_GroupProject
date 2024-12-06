@@ -25,7 +25,7 @@ public class DatabaseConnectionUtil {
             config.setJdbcUrl("jdbc:mysql://localhost:3306/aep"); // URL of your database
             config.setUsername("root"); // Your database username
             config.setPassword("root"); // Your database password
-            config.setMaximumPoolSize(20); // Maximum pool size
+            config.setMaximumPoolSize(100); // Maximum pool size
             dataSource = new HikariDataSource(config);
         } catch (Exception e) {
             throw new ExceptionInInitializerError("HikariCP initialization failed: " + e.getMessage());

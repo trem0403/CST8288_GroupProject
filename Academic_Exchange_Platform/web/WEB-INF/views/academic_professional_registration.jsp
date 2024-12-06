@@ -1,5 +1,4 @@
 <%@page import="model.InstitutionName"%>
-<%@page import="model.AcademicInstitution"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html;" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -13,7 +12,7 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.global.js"></script>
 
         <!-- CSS -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/academic_institution_registration.css" />  
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/registration_login.css" />  
         <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/header.css" />
 
         <!-- JS -->
@@ -55,6 +54,7 @@
                         </div>
 
 
+                        <label for="institutionNameID">Current institution:</label>
                         <select name="institutionNameID">
                             <%
                                 List<InstitutionName> institutions = (List<InstitutionName>) request.getAttribute("institutionNameList");
@@ -65,8 +65,11 @@
                             </option>
                             <% }%>
                         </select>
+                        <div id="institutionID-error" class="error-message">
+                            <%= request.getAttribute("institutionID-error") != null ? request.getAttribute("institutionID-error") : ""%>
+                        </div>
 
-                        <input type="submit" value="Register" />
+                        <input type="submit" value="Register"/>
                     </form>
                 </div>
             </div>

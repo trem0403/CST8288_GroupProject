@@ -11,6 +11,10 @@ import java.util.List;
 /**
  * Data Access Object (DAO) for managing InstitutionName data in the database.
  * Implements CRUD operations as defined in the GenericDAO interface.
+ * 
+ * Uses DatabaseConnectionUtil to manage database connections.
+ * 
+ * @author Ethan Tremblay
  */
 public class InstitutionNameDAO implements GenericDAO<InstitutionName> {
 

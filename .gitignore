@@ -1,4 +1,5 @@
 /Academic_Exchange_Platform/nbproject/private/
+/Academic_Exchange_Platform/nbproject/project.properties
 /Academic_Exchange_Platform/dist/
 /Academic_Exchange_Platform/build/
-/bin/
+/Academic_Exchange_Platform/src/java/dao/DatabaseConnectionUtil.java

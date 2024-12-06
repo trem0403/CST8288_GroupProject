@@ -1,13 +1,14 @@
 package controller;
 
 import dao.DatabaseConnectionUtil;
+
 import dao.AcademicInstitutionDAO;
 import model.AcademicInstitution;
-import model.Course;
+
 import dao.InstitutionNameDAO;
-import dao.RequestToTeachDAO;
 import model.InstitutionName;
-import model.RequestToTeach;
+
+import dao.UserDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -20,23 +21,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author Ethan Tremblay
  */
-@WebServlet(name = "AcademicInstitutionServlet", urlPatterns = "/institutionRegister")
+@WebServlet(name = "AcademicInstitutionRegistrationServlet", urlPatterns = "/institutionRegister")
 public class AcademicInstitutionRegistrationServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
 
     private AcademicInstitutionDAO academicInstitutionDAO;
     private InstitutionNameDAO institutionNameDAO;
-    private RequestToTeachDAO requestToTeachDAO;
+    private UserDAO userDAO;
 
-    public AcademicInstitutionRegistrationServlet() {
-        super();
-    }
+  
 
     /**
      * Initializes the servlet and sets up the DAO instance. This method is
@@ -49,7 +48,7 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
         // Initialize the DAO's
         academicInstitutionDAO = new AcademicInstitutionDAO();
         institutionNameDAO = new InstitutionNameDAO();
-        requestToTeachDAO = new RequestToTeachDAO();
+        userDAO = new UserDAO();
     }
 
     /**
@@ -63,20 +62,11 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	
-    	String action = request.getParameter("action");
-    	
-    	if("editProfile".equals(action)) {
-    		showEditProfileForm(request, response);
-    	} else {
-        
-    	sendInstitutionNameList(request, response);
+
+        sendInstitutionNameList(request, response);
 
         // Forward the request and response to the JSP page for rendering the registration form.
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_registration.jsp");
-        dispatcher.forward(request, response);
-    	
-    	}
+        request.getRequestDispatcher("WEB-INF/views/academic_institution_registration.jsp").forward(request, response);
     }
 
     /**
@@ -90,12 +80,6 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	
-    	String action = request.getParameter("action");
-
-        if ("updateProfile".equals(action)) {
-            updateProfile(request, response);
-        } else {
 
         // Get form data
         String email = request.getParameter("email");
@@ -105,51 +89,13 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
         // Define role explicitly
         String role = "AcademicInstitution";
 
-        // Initialize error messages
-        String emailError = null;
-        String passwordError = null;
-        String institutionError = null;
-
-        boolean hasError = false;
-
-        // Check if email format is valid
-        if (!email.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
-            emailError = "Invalid email format";
-            hasError = true;
-        }
-
-        // Check if email is already registered
-        try {
-            if (academicInstitutionDAO.isEmailAlreadyRegistered(email)) {
-                emailError = "The email is already registered. Please use a different email.";
-                hasError = true;
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error with query", ex);
-            emailError = "An error occurred while checking the email. Please try again.";
-            hasError = true;
-        }
-
-        // Check if password length is valid
-        if (password.length() < 6) {
-            passwordError = "Password must be at least 6 characters";
-            hasError = true;
-        }
-     
-        // Check if the institution is already registered
-        try {
-            if (academicInstitutionDAO.isInstitutionNameAlreadyRegistered(institutionNameID)) {
-                institutionError = "An institution with this name is already registered.";
-                hasError = true;
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error checking institution", ex);
-            institutionError = "An error occurred while checking the institution. Please try again.";
-            hasError = true;
-        }
-
+        // Initialize and declare error messages
+        String emailError = ValidationUtils.emailValidation(email);
+        String passwordError = ValidationUtils.passwordValidation(password);
+        String institutionError = ValidationUtils.institutionValidation(institutionNameID);
+    
         // If there are errors, set them as request attributes and forward back to the JSP
-        if (hasError) {
+        if (emailError != null || passwordError != null || institutionError != null ) {
             request.setAttribute("email-error", emailError);
             request.setAttribute("password-error", passwordError);
             request.setAttribute("institution-error", institutionError);
@@ -171,80 +117,21 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             AcademicInstitution academicInstitution = new AcademicInstitution(email, password, role, institutionNameID);
 
             // Insert into database
-            try {
-                academicInstitutionDAO.create(academicInstitution);
-                request.setAttribute("message", "Institution successfully registered!");
-            } catch (SQLException ex) {
-                Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error creating institution", ex);
-                request.setAttribute("error", "Failed to register institution. Please try again.");
-            }
-            // Forward to a success page
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_details.jsp");
-            dispatcher.forward(request, response);
-        }
-       }
-    }
-    //accept the teaching request
-    private void acceptRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        int requestID = Integer.parseInt(request.getParameter("requestID"));
-        String institutionName = request.getParameter("institutionName");
-
-        try {
-            // Create a RequestToTeach object with updated details
-            RequestToTeach requestToTeach = new RequestToTeach();
-            requestToTeach.setRequestToTeachID(requestID);
-            requestToTeach.setStatus("Accepted");
-            requestToTeach.setNotificationMessage("Your request has been accepted by " + institutionName);
-            requestToTeach.setNotificationDate(null); // Automatically set by the DAO's SQL statement
-
-            // Update the teaching request
-            requestToTeachDAO.update(requestToTeach);
-
-            // Redirect or forward to appropriate page after accepting the request
-            request.setAttribute("message", "The request has been accepted successfully!");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
-            dispatcher.forward(request, response);
-
-        } catch (SQLException e) {
-            request.setAttribute("error", "Failed to accept the request. Please try again.");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
-            dispatcher.forward(request, response);
+            ServletUtils.insertUser(academicInstitution);
+            
+            // Fetch userID for session handling
+            int userID = ServletUtils.getUserID(email, password);
+            
+            /*
+            * After successful registration and fetching userID,
+            * Store useriD and role into a session.
+            */
+            ServletUtils.storeUserInSession(request, userID, role);
+            
+            // Redirect to profile setup
+            response.sendRedirect("institutionProfile"); 
         }
     }
-
-    
-    //reject the teaching request
-    private void rejectRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        int requestID = Integer.parseInt(request.getParameter("requestID"));
-        String institutionName = request.getParameter("institutionName");
-
-        try {
-            // Create a RequestToTeach object with updated details
-            RequestToTeach requestToTeach = new RequestToTeach();
-            requestToTeach.setRequestToTeachID(requestID);
-            requestToTeach.setStatus("Rejected");
-            requestToTeach.setNotificationMessage("Your request has been rejected by " + institutionName);
-            requestToTeach.setNotificationDate(null); // Automatically set by the DAO's SQL statement
-
-            // Update the teaching request
-            requestToTeachDAO.update(requestToTeach);
-
-            // Redirect or forward to appropriate page after rejecting the request
-            request.setAttribute("message", "The request has been rejected.");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
-            dispatcher.forward(request, response);
-
-        } catch (SQLException e) {
-            request.setAttribute("error", "Failed to reject the request. Please try again.");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
-            dispatcher.forward(request, response);
-        }
-    }
-
 
     protected void sendInstitutionNameList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -265,83 +152,14 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
         }
     }
     
-    /**
-     * Displays the form for updating the institution profile.
-     */
-    private void showEditProfileForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int institutionID = Integer.parseInt(request.getParameter("institutionID"));
-
-        try {
-            AcademicInstitution institution = academicInstitutionDAO.getByID(institutionID);
-            request.setAttribute("institution", institution);
-        } catch (SQLException e) {
-            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, null, e);
-            request.setAttribute("error", "Error loading institution details.");
-        }
-
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_profile.jsp");
-        dispatcher.forward(request, response);
-    }
-    
-    /**
-     * Updates the academic institution's profile.
-     */
-    private void updateProfile(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int institutionID = Integer.parseInt(request.getParameter("institutionID"));
-        String address = request.getParameter("address");
-        String city = request.getParameter("city");
-        String state = request.getParameter("state");
-        String zip = request.getParameter("zip");
-        String country = request.getParameter("country");
-
-        try {
-            // Update institution address
-            academicInstitutionDAO.updateAddress(institutionID, address, city, state, zip, country);
-
-            // Add course offerings
-            String[] courseTitles = request.getParameterValues("courseTitles");
-            String[] courseCodes = request.getParameterValues("courseCodes");
-            String[] termIDs = request.getParameterValues("termIDs");
-
-            if (courseTitles != null && courseCodes != null && termIDs != null) {
-                for (int i = 0; i < courseTitles.length; i++) {
-                    Course course = new Course(
-                        0, // Auto-generated course ID
-                        institutionID,
-                        courseTitles[i],
-                        courseCodes[i],
-                        Integer.parseInt(termIDs[i]),
-                        "", // Optional: course outline
-                        "", // Optional: schedule
-                        "In-Person", // Default delivery method
-                        "", // Optional: preferred qualifications
-                        0.0 // Default compensation
-                    );
-                    academicInstitutionDAO.addCourseOffering(course);
-                }
-            }
-
-            request.setAttribute("message", "Profile updated successfully!");
-        } catch (SQLException e) {
-            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, null, e);
-            request.setAttribute("error", "Error updating profile.");
-        }
-
-        // Redirect back to profile page or dashboard
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
-        dispatcher.forward(request, response);
-    }
-
-
-    
-    /**
-     * Called when the servlet is destroyed (shutting down), closes the database connection pool.
+     /**
+     * Called when the servlet is destroyed (shutting down), closes the database
+     * connection pool.
      */
     @Override
     public void destroy() {
         // Close the connection pool to release resources
         DatabaseConnectionUtil.closeDataSource();
-        }
+    }
+ 
 } //end of class

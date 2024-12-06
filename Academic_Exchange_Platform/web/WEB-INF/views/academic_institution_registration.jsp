@@ -12,7 +12,7 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.global.js"></script>
 
         <!-- CSS -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/academic_institution_registration.css" />  
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/registration_login.css" />  
         <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/header.css" />
 
         <!-- JS -->
@@ -41,6 +41,7 @@
                             <%= request.getAttribute("password-error") != null ? request.getAttribute("password-error") : ""%>
                         </div>
 
+                        <label for="institutionNameID">Institution Name:</label>
                         <select name="institutionNameID">
                             <%
                                 List<InstitutionName> institutions = (List<InstitutionName>) request.getAttribute("institutionNameList");

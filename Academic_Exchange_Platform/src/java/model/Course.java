@@ -17,7 +17,7 @@ public class Course {
     private double compensation;
 
     /**
-     * Constructor to create a Course object.
+     * Default Constructor for a Course object.
      *
      * @param courseID the unique ID of the course.
      * @param institutionID the ID of the institution offering the course.
@@ -33,6 +33,32 @@ public class Course {
     public Course(int courseID, int institutionID, String title, String code, int termID, String outline, 
                   String schedule, String deliveryMethod, String preferredQualifications, double compensation) {
         this.courseID = courseID;
+        this.institutionID = institutionID;
+        this.title = title;
+        this.code = code;
+        this.termID = termID;
+        this.outline = outline;
+        this.schedule = schedule;
+        this.deliveryMethod = deliveryMethod;
+        this.preferredQualifications = preferredQualifications;
+        this.compensation = compensation;
+    }
+    
+    /**
+     * Constructor to create a Course object as an Academic Institution.
+     *
+     * @param institutionID the ID of the institution offering the course.
+     * @param title the title of the course.
+     * @param code the course code.
+     * @param termID the ID of the term the course belongs to.
+     * @param outline the outline of the course.
+     * @param schedule the schedule of the course (Morning, Afternoon, Evening).
+     * @param deliveryMethod the delivery method of the course (In-Person, Remote, Hybrid).
+     * @param preferredQualifications the qualifications preferred for the course.
+     * @param compensation the compensation for the course.
+     */
+    public Course(int institutionID, String title, String code, int termID, String outline, 
+                  String schedule, String deliveryMethod, String preferredQualifications, double compensation) {
         this.institutionID = institutionID;
         this.title = title;
         this.code = code;

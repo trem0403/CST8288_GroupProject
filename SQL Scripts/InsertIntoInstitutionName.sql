@@ -6,4 +6,5 @@ INSERT INTO InstitutionName (name) VALUES
 ('Cambridge University'),
 ('Oxford University'),
 ('Yale University'),
-("Algonquin College");
+("Algonquin College"),
+("Carlenton University");
