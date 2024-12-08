@@ -25,10 +25,10 @@ public class RequestToTeachDAO implements GenericDAO<RequestToTeach> {
 
             stmt.setInt(1, requestToTeach.getProfessionalID());
             stmt.setInt(2, requestToTeach.getCourseID());
-//            stmt.setString(3, requestToTeach.getRequestDate());
+            stmt.setDate(3, Date.valueOf(requestToTeach.getRequestDate()));
             stmt.setString(4, requestToTeach.getStatus());
             stmt.setString(5, requestToTeach.getNotificationMessage());
-            stmt.setString(6, requestToTeach.getNotificationDate());
+            stmt.setTimestamp(6, Timestamp.valueOf(requestToTeach.getNotificationDate()));
 
             stmt.executeUpdate();
 

@@ -118,7 +118,7 @@ public class ProfessionalProfileServlet extends HttpServlet {
             // Save the updated profile to the database
             academicProfessionalDAO.update(updatedProfile);
             // Forward to a success page after update
-            request.getRequestDispatcher("WEB-INF/views/professionalRegisterSuccess.jsp").forward(request, response);
+            response.sendRedirect("RequestToTeachServlet");
         } catch (SQLException ex) {
             Logger.getLogger(ProfessionalProfileServlet.class.getName()).log(Level.SEVERE, "Error updating profile", ex);
 
