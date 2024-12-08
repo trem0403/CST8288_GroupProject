@@ -136,4 +136,37 @@ public class CourseDAO implements GenericDAO<Course> {
             stmt.executeUpdate();
         }
     }
+    
+    public static List<Course> searchCourses(String title, String code, int termID, int institutionID) throws SQLException {
+        List<Course> courses = new ArrayList<>();
+        String searchSQL = "SELECT * FROM Course WHERE title LIKE ? AND code LIKE ? AND termID = ? AND institutionID = ? ORDER BY title";
+
+        try (Connection conn = DatabaseConnectionUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(searchSQL)) {
+
+            stmt.setString(1, "%" + title + "%"); // Matches courses with similar titles
+            stmt.setString(2, "%" + code + "%");  // Matches courses with similar codes
+            stmt.setInt(3, termID);               // Filters by term
+            stmt.setInt(4, institutionID);        // Filters by institution
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    courses.add(new Course(
+                        rs.getInt("courseID"),
+                        rs.getInt("institutionID"),
+                        rs.getString("title"),
+                        rs.getString("code"),
+                        rs.getInt("termID"),
+                        rs.getString("outline"),
+                        rs.getString("schedule"),
+                        rs.getString("deliveryMethod"),
+                        rs.getString("preferredQualifications"),
+                        rs.getDouble("compensation")
+                    ));
+                }
+            }
+        }
+        return courses;
+    }
+
 } // end of class

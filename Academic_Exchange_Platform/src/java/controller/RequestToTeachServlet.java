@@ -5,11 +5,15 @@
 package controller;
 
 import dao.RequestToTeachDAO;
+import model.Course;
 import model.RequestToTeach;
+import dao.CourseDAO;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.RequestDispatcher;
@@ -62,6 +66,12 @@ public class RequestToTeachServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	
+    	String action = request.getParameter("action");
+
+        if ("searchCourses".equals(action)) {
+            searchCourses(request, response);
+            }
     }
 
     /**
@@ -75,6 +85,11 @@ public class RequestToTeachServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	String action = request.getParameter("action");
+
+        if ("requestToTeach".equals(action)) {
+            requestToTeach(request, response);
+        }
     }
 
     //accept the teaching request
@@ -119,6 +134,58 @@ public class RequestToTeachServlet extends HttpServlet {
         } catch (SQLException e) {
             request.setAttribute("error", "Failed to reject the request. Please try again.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/academic_institution_dashboard.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+    
+    // search for a course
+    private void searchCourses(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String title = request.getParameter("title");
+        String code = request.getParameter("code");
+        int termID = Integer.parseInt(request.getParameter("termID"));
+        int institutionID = Integer.parseInt(request.getParameter("institutionID"));
+
+        try {
+            List<Course> courses = CourseDAO.searchCourses(title, code, termID, institutionID);
+            request.setAttribute("courses", courses);
+            request.setAttribute("title", title);
+            request.setAttribute("code", code);
+            request.setAttribute("termID", termID);
+            request.setAttribute("institutionID", institutionID);
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/course_search_results.jsp");
+            dispatcher.forward(request, response);
+        } catch (SQLException e) {
+            request.setAttribute("error", "Error retrieving courses. Please try again.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/course_search.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+
+    
+    //create new request to teach objects to handle new requests to teach
+    private void requestToTeach(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int courseID = Integer.parseInt(request.getParameter("courseID"));
+        int professionalID = Integer.parseInt(request.getSession().getAttribute("professionalID").toString()); // Assuming logged-in user info
+
+        try {
+            RequestToTeach requestToTeach = new RequestToTeach();
+            requestToTeach.setProfessionalID(professionalID);
+            requestToTeach.setCourseID(courseID);
+            requestToTeach.setStatus("Pending");
+            requestToTeach.setNotificationMessage(null);
+            requestToTeach.setNotificationDate(null);
+
+            requestToTeachDAO.create(requestToTeach);
+
+            request.setAttribute("message", "Request to teach submitted successfully!");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/course_search_results.jsp");
+            dispatcher.forward(request, response);
+        } catch (SQLException e) {
+            request.setAttribute("error", "Failed to submit request. Please try again.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/course_search_results.jsp");
             dispatcher.forward(request, response);
         }
     }
