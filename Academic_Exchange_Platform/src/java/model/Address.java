@@ -6,7 +6,7 @@ package model;
  */
 public class Address {
 
-    private String zip; // Primary key
+    private int zip; // Primary key
     private String country;
     private String state;
     private String city;
@@ -21,7 +21,7 @@ public class Address {
      * @param city the city.
      * @param street the street.
      */
-    public Address(String zip, String country, String state, String city, String street) {
+    public Address(int zip, String country, String state, String city, String street) {
         this.zip = zip;
         this.country = country;
         this.state = state;
@@ -34,7 +34,7 @@ public class Address {
      *
      * @return the ZIP code.
      */
-    public String getZip() {
+    public int getZip() {
         return zip;
     }
 
@@ -43,7 +43,7 @@ public class Address {
      *
      * @param zip the ZIP code to set.
      */
-    public void setZip(String zip) {
+    public void setZip(int zip) {
         this.zip = zip;
     }
 

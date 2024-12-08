@@ -22,13 +22,13 @@
             <h1 class="welcome-message">Welcome to the Academic Exchange Platform</h1>
 
             <div class="registration-sections">
-                <div class="registration-card" @mouseover="hoverMessage('Institution')" @mouseout="hoverMessage('')">
+                <div class="registration-card">
                     <h2>Academic Institution</h2>
                     <p>Join as an academic institution and connect with professionals worldwide.</p>
                     <a href="${pageContext.request.contextPath}/institutionRegister" class="btn">Register</a>
                 </div>
 
-                <div class="registration-card" @mouseover="hoverMessage('Professional')" @mouseout="hoverMessage('')">
+                <div class="registration-card">
                     <h2>Academic Professional</h2>
                     <p>Register to collaborate with institutions and share your expertise.</p>
                     <a href="${pageContext.request.contextPath}/professionalRegister" class="btn">Register</a>

@@ -41,6 +41,7 @@
                             <%= request.getAttribute("password-error") != null ? request.getAttribute("password-error") : ""%>
                         </div>
 
+                        <label for="institutionNameID">Institution Name:</label>
                         <select name="institutionNameID">
                             <%
                                 List<InstitutionName> institutions = (List<InstitutionName>) request.getAttribute("institutionNameList");

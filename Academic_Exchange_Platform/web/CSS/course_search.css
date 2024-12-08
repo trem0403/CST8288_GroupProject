@@ -1,0 +1,173 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap");
+
+:root {
+  font-size: 16px;
+  --text-primary: #dfdfdf;
+  --text-secondary: #febe7e;
+  --bg-primary: #1f1f1f;
+  --bg-secondary: #141418;
+  --bg-third: #232325;
+  --accent-color: #c24d2c;
+  --transition-speed: 600ms;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Sora, sans-serif;
+}
+
+body {
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+}
+
+#filters {
+  margin-bottom: 20px;
+  background-color: var(--bg-secondary);
+  padding: 15px;
+  border-radius: 0.7rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 1200px;
+}
+
+.filter-section,
+.sort-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.filter-section label,
+.sort-section label {
+  margin-right: 1rem;
+  color: var(--text-secondary);
+}
+
+select,
+#searchInput {
+  padding: 0.6rem;
+  border-radius: 0.7rem;
+  border: 2px solid var(--accent-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all var(--transition-speed);
+}
+
+select:focus,
+#searchInput:focus {
+  outline: none;
+  border-color: var(--text-secondary);
+  background-color: var(--bg-third);
+}
+
+#searchInput {
+  transition: width 0.3s ease;
+}
+
+#searchInput:focus {
+  width: 16rem; /* Expanded width on focus */
+}
+
+button {
+  padding: 0.6rem 1.2rem;
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 0.7rem;
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+}
+
+button:hover {
+  background-color: #febe7e;
+}
+
+table {
+  width: 100%;
+  border-radius: 0.7rem;
+  border: 2px solid var(--accent-color);
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--bg-secondary);
+  border: 2px solid var(--bg-third);
+}
+
+th {
+  background-color: var(--bg-third);
+  color: var(--accent-color);
+  text-transform: uppercase;
+}
+
+tr:nth-child(even) {
+  background-color: var(--bg-secondary);
+}
+
+tr:hover {
+  background-color: var(--bg-third);
+}
+
+img {
+  max-width: 6.25rem;
+  height: auto;
+}
+
+@media only screen and (max-width: 1050px) {
+  * {
+    font-size: 14px;
+  }
+
+  #filters {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .filter-section,
+  .sort-section {
+    justify-content: center;
+  }
+
+  #searchInput {
+    display: block;
+    width: 13rem;
+    min-width: 12rem;
+    margin: 0 auto; /* Center horizontally */
+    margin-bottom: 1rem;
+  }
+
+  select {
+    width: 100%;
+  }
+}
+
+@media only screen and (min-width: 1050px) {
+  * {
+    font-size: 16px;
+  }
+
+  #searchInput {
+    width: 9.5rem;
+    min-width: 8.5rem;
+    margin-bottom: 1rem;
+  }
+}

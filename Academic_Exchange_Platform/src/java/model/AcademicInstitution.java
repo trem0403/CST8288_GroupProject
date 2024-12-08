@@ -2,6 +2,7 @@ package model;
 
 import enums.Role;
 
+
 /**
  * Represents an academic institution. 
  * This class extends the User class since institutions are users in the system.

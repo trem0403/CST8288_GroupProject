@@ -21,12 +21,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author Ethan Tremblay
  */
-@WebServlet(name = "AcademicInstitutionServlet", urlPatterns = "/institutionRegister")
+@WebServlet(name = "AcademicInstitutionRegistrationServlet", urlPatterns = "/institutionRegister")
 public class AcademicInstitutionRegistrationServlet extends HttpServlet {
 
 
@@ -88,51 +89,13 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
         // Define role explicitly
         String role = "AcademicInstitution";
 
-        // Initialize error messages
-        String emailError = null;
-        String passwordError = null;
-        String institutionError = null;
-
-        boolean hasError = false;
-
-        // Check if email format is valid
-        if (!email.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
-            emailError = "Invalid email format";
-            hasError = true;
-        }
-
-        // Check if email is already registered
-        try {
-            if (userDAO.isEmailAlreadyRegistered(email)) {
-                emailError = "The email is already registered. Please use a different email.";
-                hasError = true;
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error with query", ex);
-            emailError = "An error occurred while checking the email. Please try again.";
-            hasError = true;
-        }
-
-        // Check if password length is valid
-        if (password.length() < 6) {
-            passwordError = "Password must be at least 6 characters";
-            hasError = true;
-        }
-     
-        // Check if the institution is already registered
-        try {
-            if (academicInstitutionDAO.isInstitutionNameAlreadyRegistered(institutionNameID)) {
-                institutionError = "An institution with this name is already registered.";
-                hasError = true;
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error checking institution", ex);
-            institutionError = "An error occurred while checking the institution. Please try again.";
-            hasError = true;
-        }
-
+        // Initialize and declare error messages
+        String emailError = ValidationUtils.emailValidation(email);
+        String passwordError = ValidationUtils.passwordValidation(password);
+        String institutionError = ValidationUtils.institutionValidation(institutionNameID);
+    
         // If there are errors, set them as request attributes and forward back to the JSP
-        if (hasError) {
+        if (emailError != null || passwordError != null || institutionError != null ) {
             request.setAttribute("email-error", emailError);
             request.setAttribute("password-error", passwordError);
             request.setAttribute("institution-error", institutionError);
@@ -154,15 +117,19 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             AcademicInstitution academicInstitution = new AcademicInstitution(email, password, role, institutionNameID);
 
             // Insert into database
-            try {
-                academicInstitutionDAO.create(academicInstitution);
-                request.setAttribute("message", "Institution successfully registered!");
-            } catch (SQLException ex) {
-                Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName()).log(Level.SEVERE, "Error creating institution", ex);
-                request.setAttribute("error", "Failed to register institution. Please try again.");
-            }
-            // Forward to a success page
-            request.getRequestDispatcher("WEB-INF/views/academic_institution_details.jsp").forward(request, response);
+            ServletUtils.insertUser(academicInstitution);
+            
+            // Fetch userID for session handling
+            int userID = ServletUtils.getUserID(email, password);
+            
+            /*
+            * After successful registration and fetching userID,
+            * Store useriD and role into a session.
+            */
+            ServletUtils.storeUserInSession(request, userID, role);
+            
+            // Redirect to profile setup
+            response.sendRedirect("institutionProfile"); 
         }
     }
 
@@ -183,6 +150,16 @@ public class AcademicInstitutionRegistrationServlet extends HttpServlet {
             Logger.getLogger(AcademicInstitutionRegistrationServlet.class.getName())
                     .log(Level.SEVERE, "Error fetching institution names", e);
         }
+    }
+    
+     /**
+     * Called when the servlet is destroyed (shutting down), closes the database
+     * connection pool.
+     */
+    @Override
+    public void destroy() {
+        // Close the connection pool to release resources
+        DatabaseConnectionUtil.closeDataSource();
     }
  
 } //end of class

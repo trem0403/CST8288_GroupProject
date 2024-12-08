@@ -8,6 +8,7 @@ import dao.AcademicProfessionalDAO;
 import model.AcademicProfessional;
 
 import dao.AcademicInstitutionDAO;
+import dao.DatabaseConnectionUtil;
 import model.AcademicInstitution;
 
 import dao.UserDAO;
@@ -22,6 +23,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -80,8 +82,6 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        String role = null;
-
         // Initialize error messages
         String loginError = null;
 
@@ -111,26 +111,39 @@ public class LoginServlet extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
             return;
         } else {
-            try {
-                // Continue with the login process (e.g., Go to home page)
-
-                // Fetch user role
-                role = userDAO.getRole(email, password);
-            } catch (SQLException ex) {
-                Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, "Error fetching user role", ex);
-                request.setAttribute("error", "Failed to register professional. Please try again.");
-            }
-
+            // Continue with the login process (e.g., Go to home page)
+            
+            // Fetch userID and role for session handling
+            int userID = ServletUtils.getUserID(email, password);
+            String role = ServletUtils.getRole(email, password);
+            
+            /*
+            * After successful registration and fetching userID and role,
+            * Store useriD and role into a session.
+            */
+            ServletUtils.storeUserInSession(request, userID, role);
+            
+            // Redirect to servlet based on user role
             switch (role) {
                 case "AcademicProfessional":
-                    response.sendRedirect("professionalRegister");
+                    response.sendRedirect("professionalProfile");
                     break;
                 case "AcademicInstitution":
-                    response.sendRedirect("institutionRegister");
+                    response.sendRedirect("institutionProfile");
                     break;
                 default:
                     break;
             } // end of switch-case
         }
+    }
+    
+     /**
+     * Called when the servlet is destroyed (shutting down), closes the database
+     * connection pool.
+     */
+    @Override
+    public void destroy() {
+        // Close the connection pool to release resources
+        DatabaseConnectionUtil.closeDataSource();
     }
 } // end of class

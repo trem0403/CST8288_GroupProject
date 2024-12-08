@@ -54,6 +54,7 @@
                         </div>
 
 
+                        <label for="institutionNameID">Current institution:</label>
                         <select name="institutionNameID">
                             <%
                                 List<InstitutionName> institutions = (List<InstitutionName>) request.getAttribute("institutionNameList");
@@ -64,6 +65,9 @@
                             </option>
                             <% }%>
                         </select>
+                        <div id="institutionID-error" class="error-message">
+                            <%= request.getAttribute("institutionID-error") != null ? request.getAttribute("institutionID-error") : ""%>
+                        </div>
 
                         <input type="submit" value="Register"/>
                     </form>
