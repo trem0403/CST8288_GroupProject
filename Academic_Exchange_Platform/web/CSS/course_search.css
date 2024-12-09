@@ -21,7 +21,7 @@
 
 body {
   color: var(--text-primary);
-  background-color: var(--bg-primary);
+  background: linear-gradient(135deg, #121212, #1c1c1c);
   display: flex;
   justify-content: center;
   align-items: center;

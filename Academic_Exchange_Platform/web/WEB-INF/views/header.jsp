@@ -6,5 +6,14 @@
             </a>
             <span class="platform-title">Academic Exchange Platform</span>
         </div>
+
+        <c:choose>
+            <c:when test="${not empty sessionScope.userID}">
+                <!-- Show logout button when user is logged in -->
+                <div class="logout">
+                    <a href="logout">Logout</a>
+                </div>
+            </c:when>
+        </c:choose>
     </div>
 </header>

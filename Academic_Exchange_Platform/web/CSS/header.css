@@ -33,7 +33,27 @@
     font-size: 24px;
     font-weight: bold;
     color: white;
-
 }
+
+
+.logout {
+    background: linear-gradient(135deg, #ff5722, #ff784e);
+    padding: 10px 20px;
+    border-radius: 5px; /* Optional: make it look like a button */
+    cursor: pointer;
+    margin-right: 40px;
+}
+
+a {
+    text-decoration: none; /* Remove underline */
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.logout:hover {
+    background: linear-gradient(135deg, #ff784e, #ff8a50);
+}
+
 
 

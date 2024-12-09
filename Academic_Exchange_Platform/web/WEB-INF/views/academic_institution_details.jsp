@@ -7,20 +7,26 @@
 --%>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Complete Profile</title>
-</head>
-<body>
-    <h2>Complete Your Institution Profile</h2>
+    <head>
+        <title>Complete Profile</title>
 
-    <%
-        AcademicInstitution academicInstitution = (AcademicInstitution) request.getAttribute("academicInstitution");
-    %>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/header.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/academic_institution_details.css" />
+    </head>
+    <body>
+        <%@ include file="header.jsp"%>
 
-    <form action="<%= request.getContextPath() %>/institutionProfile" method="post">
-        Zip: <input type="text" name="zip" value="<%= academicInstitution != null ? academicInstitution.getZip() : "" %>" required><br>
-        <input type="submit" value="Submit">
-    </form>
-    
-</body>
+        <h2>Complete Your Institution Profile</h2>
+
+
+        <%
+            AcademicInstitution academicInstitution = (AcademicInstitution) request.getAttribute("academicInstitution");
+        %>
+
+        <form action="<%= request.getContextPath()%>/institutionProfile" method="post">
+            Zip: <input type="text" name="zip" value="<%= academicInstitution != null ? academicInstitution.getZip() : ""%>" required><br>
+            <input type="submit" value="Submit">
+        </form>
+
+    </body>
 </html>

@@ -7,23 +7,30 @@
 --%>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Complete Profile</title>
-</head>
-<body>
-    <h2>Complete Your Professional Profile</h2>
+    <head>
+        <title>Complete Profile</title>
 
-    <%
-        AcademicProfessional academicProfessional = (AcademicProfessional) request.getAttribute("academicProfessional");
-    %>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/header.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/academic_professional_details.css" />
 
-    <form action="<%= request.getContextPath() %>/professionalProfile" method="post">
-        Name: <input type="text" name="name" value="<%= academicProfessional != null ? academicProfessional.getName() : "" %>" required><br>
-        Current Position: <input type="text" name="currentPositionAtInstitution" value="<%= academicProfessional != null ? academicProfessional.getCurrentPositionAtInstitution() : "" %>" required><br>
-        Education Background: 
-        <textarea name="educationBackground" required><%= academicProfessional != null ? academicProfessional.getEducationBackground() : "" %></textarea><br>
-        Area of Expertise: <input type="text" name="areaOfExpertise" value="<%= academicProfessional != null ? academicProfessional.getAreaOfExpertise() : "" %>" required><br>
-        <input type="submit" value="Submit">
-    </form>
-</body>
+
+    </head>
+    <body>
+        <%@ include file="header.jsp"%>
+
+        <h2>Complete Your Professional Profile</h2>
+
+        <%
+            AcademicProfessional academicProfessional = (AcademicProfessional) request.getAttribute("academicProfessional");
+        %>
+
+        <form action="<%= request.getContextPath()%>/professionalProfile" method="post">
+            Name: <input type="text" name="name" value="<%= academicProfessional != null ? academicProfessional.getName() : ""%>" required><br>
+            Current Position: <input type="text" name="currentPositionAtInstitution" value="<%= academicProfessional != null ? academicProfessional.getCurrentPositionAtInstitution() : ""%>" required><br>
+            Education Background: 
+            <textarea name="educationBackground" required><%= academicProfessional != null ? academicProfessional.getEducationBackground() : ""%></textarea><br>
+            Area of Expertise: <input type="text" name="areaOfExpertise" value="<%= academicProfessional != null ? academicProfessional.getAreaOfExpertise() : ""%>" required><br>
+            <input type="submit" value="Submit">
+        </form>
+    </body>
 </html>
