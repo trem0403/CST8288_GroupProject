@@ -26,7 +26,7 @@ import model.AcademicProfessional;
  *
  * @author Sancheaz + Ethan
  */
-@WebServlet("/institutionProfile")
+@WebServlet(name = "InstitutionProfileServlet", urlPatterns =  "/institutionProfile")
 public class InstitutionProfileServlet extends HttpServlet {
 
     private AcademicInstitutionDAO academicInstitutionDAO;

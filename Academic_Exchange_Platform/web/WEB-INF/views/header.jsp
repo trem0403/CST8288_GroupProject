@@ -8,7 +8,7 @@
         </div>
 
         <c:choose>
-            <c:when test="${not empty sessionScope.userID}">
+                <c:when test="${not empty sessionScope.userID}">
                 <!-- Show logout button when user is logged in -->
                 <div class="logout">
                     <a href="${pageContext.request.contextPath}/index.jsp">Logout</a>
