@@ -15,6 +15,12 @@ import model.RequestToTeach;
 
 public class RequestToTeachDAO implements GenericDAO<RequestToTeach> {
 
+    /**
+     * Creates a new AcademicProfessional in the database.
+     *
+     * @param requestToTeach The requestToTeach object containing data to be inserted.
+     * @throws SQLException If a database access error occurs.
+     */
     @Override
     public void create(RequestToTeach requestToTeach) throws SQLException {
 
@@ -109,7 +115,7 @@ public class RequestToTeachDAO implements GenericDAO<RequestToTeach> {
     /**
      * Updates the status of a teaching request and sends a notification.
      *
-     * @param RequestToTeach
+     * @param requestToTeach The requestToTeach object containing data to be updated.
      * @throws SQLException If a database access error occurs.
      */
     @Override
