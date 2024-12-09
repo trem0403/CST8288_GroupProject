@@ -12,11 +12,12 @@ import dao.DatabaseConnectionUtil;
 import dao.InstitutionNameDAO;
 import dao.TermDAO;
 
+import java.util.Map;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,7 +30,7 @@ import model.Term;
 
 /**
  *
- * @author Micheal Acquah
+ * @author Micheal Acquah + Ethan Tremblay
  */
 @WebServlet(name = "RequestToTeachServlet", urlPatterns = "/RequestToTeachServlet")
 public class RequestToTeachServlet extends HttpServlet {
@@ -88,6 +89,15 @@ public class RequestToTeachServlet extends HttpServlet {
             List<InstitutionName> institutions = institutionNameDAO.getAll();
             request.setAttribute("institutions", institutions);
 
+            // Create mappings for institution and term names
+            Map<Integer, String> institutionMap = institutions.stream()
+                    .collect(Collectors.toMap(InstitutionName::getInstitutionNameID, InstitutionName::getName));
+            request.setAttribute("institutionMap", institutionMap);
+
+            Map<Integer, String> termMap = terms.stream()
+                    .collect(Collectors.toMap(Term::getTermID, Term::getTerm));
+            request.setAttribute("termMap", termMap);
+
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/course_search.jsp");
             dispatcher.forward(request, response);
         } catch (SQLException e) {
@@ -108,7 +118,7 @@ public class RequestToTeachServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         String action = request.getParameter("action");
 
         if ("requestToTeach".equals(action)) {

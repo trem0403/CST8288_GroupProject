@@ -1,5 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap");
 
+/*CSS styling inspried from preivous project*/
+
 :root {
   font-size: 16px;
   --text-primary: #dfdfdf;
@@ -34,25 +36,16 @@ h1 {
   color: var(--text-secondary);
 }
 
-#filters {
-  margin-bottom: 20px;
-  background-color: var(--bg-secondary);
-  padding: 15px;
-  border-radius: 0.7rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  width: 100%;
-  max-width: 1200px;
-}
 
-.filter-section,
-.sort-section {
+.filter-section 
+{
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
 }
 
-.filter-section label,
-.sort-section label {
+.filter-section label
+{
   margin-right: 1rem;
   color: var(--text-secondary);
 }
@@ -81,6 +74,7 @@ select:focus,
 
 #searchInput:focus {
   width: 16rem; /* Expanded width on focus */
+  max-width: 100%; /* Prevent overflow */
 }
 
 button {
@@ -91,10 +85,6 @@ button {
   border-radius: 0.7rem;
   cursor: pointer;
   transition: background-color var(--transition-speed);
-}
-
-button:hover {
-  background-color: #febe7e;
 }
 
 table {
@@ -127,29 +117,21 @@ tr:hover {
   background-color: var(--bg-third);
 }
 
-img {
-  max-width: 6.25rem;
-  height: auto;
-}
 
 @media only screen and (max-width: 1050px) {
   * {
-    font-size: 14px;
+    font-size: 16px;
   }
 
-  #filters {
-    width: 100%;
-    padding: 10px;
-  }
 
-  .filter-section,
-  .sort-section {
+  .filter-section
+  {
     justify-content: center;
   }
 
   #searchInput {
     display: block;
-    width: 13rem;
+    width: 20rem;
     min-width: 12rem;
     margin: 0 auto; /* Center horizontally */
     margin-bottom: 1rem;
@@ -162,12 +144,20 @@ img {
 
 @media only screen and (min-width: 1050px) {
   * {
-    font-size: 16px;
+    font-size: 18px;
+  }
+  
+  .filter-section
+  {
   }
 
   #searchInput {
-    width: 9.5rem;
+    width: 25.5rem;
     min-width: 8.5rem;
     margin-bottom: 1rem;
+  }
+  
+  select {
+    width: 100%;
   }
 }
