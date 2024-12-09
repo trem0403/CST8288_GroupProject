@@ -55,7 +55,14 @@ public class ProfessionalProfileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Get the existing session without creating a new one (null if no session exists)
+        
+    	//If user is not logged in, redirect them to login page
+    	if (!ServletUtils.isUserLoggedIn(request)) {
+            response.sendRedirect("login"); // Redirect to login if not logged in
+            return;
+        }
+    	
+    	// Get the existing session without creating a new one (null if no session exists)
         // Validate session
         ServletUtils.validateSession(request, response);
 

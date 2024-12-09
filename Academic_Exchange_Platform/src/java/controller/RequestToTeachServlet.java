@@ -67,6 +67,12 @@ public class RequestToTeachServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     	
+    	//If user is not logged in, redirect them to login page
+    	if (!ServletUtils.isUserLoggedIn(request)) {
+            response.sendRedirect("login"); // Redirect to login if not logged in
+            return;
+        }
+    	
     	String action = request.getParameter("action");
 
         if ("searchCourses".equals(action)) {

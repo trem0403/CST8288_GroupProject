@@ -156,7 +156,19 @@ public class ServletUtils {
             return null;
         }
     }
+    
+    /**
+     * Checks if the user is logged in by verifying session attributes.
+     *
+     * @param request HttpServletRequest object.
+     * @return True if the user is logged in; otherwise, false.
+     */
+    	public static boolean isUserLoggedIn(HttpServletRequest request) {
+	        HttpSession session = request.getSession(false);
+	        return session != null && session.getAttribute("userID") != null;
+    }
 
+    	
     /**
      * Stores userID and role in the session.
      *
